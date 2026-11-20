@@ -21,6 +21,7 @@ export function href(path: string): string {
 
 /** True when `path` is the current page or one of its children. Used for nav highlighting. */
 export function isActive(currentPathname: string, path: string): boolean {
+  if (path.includes('#')) return false; // in-page anchors are never "the current page"
   const target = href(path);
   if (target === href('/')) return currentPathname === target;
   return currentPathname.startsWith(target);

@@ -17,7 +17,11 @@ All values live in `src/styles/tokens.css`. Components only use variables.
 | `--color-muted` | `#555555` | `#a3a3a3` | Secondary text (AAA contrast) |
 | `--color-faint` | `#e5e5e5` | `#262626` | Hairlines                     |
 
-Dark mode swaps these four values and nothing else.
+These roles are built from two raw inks, `--ink` and `--paper`. Dark mode
+swaps the inks. The `.invert` class swaps the roles for one block, which is how
+the home page alternates white and black chapters. Anything inside an
+inverted block that uses the roles (text, `--rule` lines, tags, buttons)
+flips automatically.
 
 ### Type
 
@@ -42,8 +46,10 @@ Dark mode swaps these four values and nothing else.
 - **Hover = inversion.** Rows, buttons and tags flip black ↔ white
   instantly. No fades.
 - **Focus** is always a 3px outline. It's never removed.
-- **Motion**: smooth scrolling only, and only if the visitor hasn't asked
-  for reduced motion.
+- **Motion**: deliberately minimal. Smooth scrolling, and the chapter
+  drawings drawing themselves once as they scroll into view. Both are
+  switched off when the visitor asks for reduced motion, and the drawings
+  show complete without JavaScript.
 
 ## Responsive behaviour
 
@@ -77,6 +83,14 @@ hover)`). On iPhone/iPad, a tap shows the inverted state while pressed
 - Adding the site to the iPhone home screen uses `public/apple-touch-icon.png`.
 
 ## Patterns
+
+- **Story chapters** on the home page: chapter label row, a huge one-word
+  theme, then the story on the left and a line drawing on the right
+  (drawing first on phones). Even chapters are inverted. Every drawing makes
+  the same point: most of the picture is ordinary, one thing is marked.
+- **"Now reading" marker**: the current chapter's name runs vertically in
+  the left margin on tablets and laptops, using `mix-blend-mode: difference`
+  so it reads on both black and white sections.
 
 - **Numbered sections** (`01 SELECTED WORK`) with a thick top rule. Numbers
   are computed, so hiding a section never leaves a gap.

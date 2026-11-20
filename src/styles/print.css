@@ -4,7 +4,10 @@
  */
 @media print {
   :root,
-  [data-theme='dark'] {
+  [data-theme='dark'],
+  .invert {
+    --ink: #000;
+    --paper: #fff;
     --color-bg: #fff;
     --color-fg: #000;
     --color-muted: #333;

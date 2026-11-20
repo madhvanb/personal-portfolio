@@ -25,9 +25,15 @@ interface Props {
   title?: string;
   description?: string;
   type?: 'website' | 'article';
+  /**
+   * Full-bleed pages (the home page story) manage their own width with
+   * `.container`, so sections can run edge to edge. Other pages get a
+   * centred column automatically.
+   */
+  bleed?: boolean;
 }
 
-const { title, description, type } = Astro.props;
+const { title, description, type, bleed = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -41,7 +47,7 @@ const { title, description, type } = Astro.props;
       Skip to content
     </a>
     <Header />
-    <main id="main" class="container">
+    <main id="main" class:list={[{ container: !bleed }]}>
       <slot />
     </main>
     <Footer />

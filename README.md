@@ -1,6 +1,8 @@
 # personal-portfolio
 
-Portfolio of Madhvan Bajaj: projects, publications, writing and résumé.
+Portfolio of Madhvan Bajaj. The home page tells the work as a story in
+chapters, around one question: what doesn't belong here? Plus projects, a CV
+page and (optionally) writing.
 Monochrome and brutalist on purpose: black, white, hard rules and big type.
 Built for and tested on iPhone, iPad (including mini) and laptops.
 
@@ -24,6 +26,7 @@ Edit a file, save, and the browser updates on its own.
 | I want to…                             | Do this                                               |
 | -------------------------------------- | ----------------------------------------------------- |
 | Change my name, email, social links    | Edit `src/config/site.ts`                             |
+| Edit the home page story               | Edit the files in `src/content/chapters/`             |
 | Add a project                          | Add a file to `src/content/projects/`                 |
 | Write a post                           | Add a file to `src/content/writing/`                  |
 | Update experience / education / skills | Edit the YAML files in `src/data/`                    |

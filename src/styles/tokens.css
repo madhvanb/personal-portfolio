@@ -11,10 +11,18 @@
  */
 
 :root {
-  /* ---- Colour (light) ---- */
-  --color-bg: #ffffff;
-  --color-fg: #000000;
-  --color-muted: #555555; /* secondary text; 7.4:1 on white (passes WCAG AAA) */
+  /* ---- Colour ----
+   * Two raw inks, then semantic roles built from them. Components use the
+   * roles (--color-*). `.invert` (global.css) swaps the roles locally, which
+   * is how chapters alternate black-on-white / white-on-black. */
+  --ink: #000000;
+  --paper: #ffffff;
+  --ink-muted: #555555; /* grey text on paper; 7.4:1 (WCAG AAA) */
+  --paper-muted: #a3a3a3; /* grey text on ink; 8.3:1 (WCAG AAA) */
+
+  --color-bg: var(--paper);
+  --color-fg: var(--ink);
+  --color-muted: var(--ink-muted);
   --color-faint: #e5e5e5; /* hairlines, table stripes */
 
   /* ---- Type ---- */
@@ -78,8 +86,9 @@
 }
 
 [data-theme='dark'] {
-  --color-bg: #000000;
-  --color-fg: #ffffff;
-  --color-muted: #a3a3a3;
+  --ink: #ffffff;
+  --paper: #000000;
+  --ink-muted: #a3a3a3;
+  --paper-muted: #555555;
   --color-faint: #262626;
 }

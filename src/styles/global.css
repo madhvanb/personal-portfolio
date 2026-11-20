@@ -99,6 +99,20 @@ a {
   padding-right: var(--gutter-right);
 }
 
+/* Swap foreground and background for a block (inverted chapters, contact).
+   Everything inside that uses the colour roles flips automatically. */
+.invert {
+  --color-bg: var(--ink);
+  --color-fg: var(--paper);
+  --color-muted: var(--paper-muted);
+  /* Re-declared so lines pick up the swapped colour (custom properties
+     resolve where they're declared, not where they're used). */
+  --rule: 1px solid var(--color-fg);
+  --rule-thick: 3px solid var(--color-fg);
+  background: var(--color-bg);
+  color: var(--color-fg);
+}
+
 /* Small uppercase mono label: section numbers, metadata, tags. */
 .label {
   font-family: var(--font-mono);

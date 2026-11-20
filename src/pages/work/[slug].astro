@@ -1,0 +1,57 @@
+---
+/**
+ * /work/<chapter>/: the long version of a story chapter.
+ * Only generated for chapters with `page: true` in their frontmatter, i.e.
+ * once you've written a body for them.
+ */
+import { render } from 'astro:content';
+import ChapterFigure from '@/components/ChapterFigure.astro';
+import PaperList from '@/components/PaperList.astro';
+import StatGrid from '@/components/StatGrid.astro';
+import ArticleLayout from '@/layouts/ArticleLayout.astro';
+import { getChapters } from '@/lib/content';
+
+export async function getStaticPaths() {
+  const chapters = await getChapters();
+  return chapters
+    .filter(({ chapter }) => chapter.data.page)
+    .map(({ chapter, papers }) => ({ params: { slug: chapter.id }, props: { chapter, papers } }));
+}
+
+const { chapter, papers } = Astro.props;
+const { data } = chapter;
+const { Content } = await render(chapter);
+const kicker = [
+  `Chapter ${String(data.number).padStart(2, '0')}`,
+  data.theme,
+  data.org,
+  data.period,
+]
+  .filter(Boolean)
+  .join(' · ');
+---
+
+<ArticleLayout
+  title={data.title}
+  description={data.lede}
+  tags={data.tags}
+  {kicker}
+  back={{ label: 'Back to the story', path: '/#work' }}
+>
+  <Fragment slot="meta">
+    <StatGrid stats={data.stats} />
+    {data.figure && (
+      <div class="fig">
+        <ChapterFigure kind={data.figure} />
+      </div>
+    )}
+  </Fragment>
+  <Content />
+  <PaperList {papers} />
+</ArticleLayout>
+
+<style>
+  .fig {
+    width: min(100%, 18rem);
+  }
+</style>

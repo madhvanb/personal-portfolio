@@ -4,8 +4,9 @@
  * Pages should call these instead of `getCollection()` directly, so filtering
  * (drafts) and sorting rules live in one place and stay consistent.
  */
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, getEntries, type CollectionEntry } from 'astro:content';
 
+export type Chapter = CollectionEntry<'chapters'>;
 export type Project = CollectionEntry<'projects'>;
 export type Post = CollectionEntry<'writing'>;
 
@@ -17,6 +18,17 @@ const newestFirst = (a: Post, b: Post): number => b.data.date.valueOf() - a.data
 
 const byOrder = <T extends { data: { order: number } }>(a: T, b: T): number =>
   a.data.order - b.data.order;
+
+/** Story chapters in order, with their referenced publications resolved. */
+export async function getChapters() {
+  const chapters = (await getCollection('chapters')).sort((a, b) => a.data.number - b.data.number);
+  return Promise.all(
+    chapters.map(async (chapter) => ({
+      chapter,
+      papers: (await getEntries(chapter.data.publications)).map((p) => p.data),
+    })),
+  );
+}
 
 /** By `order` (lower first), then date (newest first, undated last). */
 const byOrderThenDate = (a: Project, b: Project): number =>

@@ -6,6 +6,7 @@
  * a typo, `npm run dev` / `npm run build` stops with a message naming the file
  * and field. That's what keeps content edits from silently breaking pages.
  *
+ *   chapters     src/content/chapters/*.mdx    the home page story, one file per chapter
  *   projects     src/content/projects/*.mdx    one file per project (case study)
  *   writing      src/content/writing/*.mdx     one file per post
  *   experience   src/data/experience.yaml      list of jobs
@@ -18,7 +19,7 @@
  *
  * Field-by-field docs: docs/content.md
  */
-import { defineCollection } from 'astro:content';
+import { defineCollection, reference } from 'astro:content';
 import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
@@ -33,6 +34,41 @@ const links = z
     website: z.url().optional(),
   })
   .default({});
+
+/** Headline numbers, e.g. { value: "+15%", label: "detection accuracy" }. */
+const stats = z.array(z.object({ value: z.string(), label: z.string() })).default([]);
+
+const chapters = defineCollection({
+  loader: glob({ base: './src/content/chapters', pattern: '**/*.{md,mdx}' }),
+  schema: z.object({
+    /** Position in the story. Shown as "01", "02"... */
+    number: z.number().int().positive(),
+    /** One big word, e.g. "Skies". */
+    theme: z.string(),
+    /** The chapter's headline: one sentence about what you did. */
+    title: z.string(),
+    /** One short paragraph telling the story. */
+    lede: z.string(),
+    /** Where and when, shown as small labels. */
+    org: z.string().optional(),
+    role: z.string().optional(),
+    period: z.string().optional(),
+    /** Which line drawing to show. See src/components/ChapterFigure.astro. */
+    figure: z.enum(['networks', 'skies', 'words', 'health', 'coffee']).optional(),
+    stats,
+    tags: z.array(z.string()).default([]),
+    /** Papers / patents to list under this chapter (ids from publications.yaml). */
+    publications: z.array(reference('publications')).default([]),
+    /** A short closing section rather than a full chapter. */
+    coda: z.boolean().default(false),
+    /**
+     * Set true once the MDX body below the frontmatter has a real write-up;
+     * the chapter then gets its own page at /work/<file-name>/ and a
+     * "Read the full chapter" link on the home page.
+     */
+    page: z.boolean().default(false),
+  }),
+});
 
 const projects = defineCollection({
   loader: glob({ base: './src/content/projects', pattern: '**/*.{md,mdx}' }),
@@ -162,6 +198,7 @@ const certifications = defineCollection({
 });
 
 export const collections = {
+  chapters,
   projects,
   writing,
   experience,

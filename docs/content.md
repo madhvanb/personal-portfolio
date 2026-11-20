@@ -15,6 +15,44 @@ the file and field. Nothing gets silently skipped.
 > is marked `TODO` in a comment in the relevant file, never invented.
 > Search the repo for `TODO` to see what's left to fill in.
 
+## Home page story (chapters)
+
+The home page is a story, not a résumé. It opens with one question
+(`hero.question` in `src/config/site.ts`, "What doesn't belong here?") and
+answers it in chapters, one file each in `src/content/chapters/`:
+
+| File              | Theme    | Source                         |
+| ----------------- | -------- | ------------------------------ |
+| `01-networks.mdx` | Networks | consistec: anomaly detection   |
+| `02-skies.mdx`    | Skies    | DRDO: GNN drone detection      |
+| `03-words.mdx`    | Words    | Insignia: RAG + misinformation |
+| `04-health.mdx`   | Health   | Research assistant + papers    |
+| `05-coffee.mdx`   | Coffee   | Coda: TDS research + patent    |
+
+```mdx
+---
+number: 2 # order in the story; even numbers are shown inverted
+theme: Skies # the huge word
+title: Spotting drones in crowded airspace, fast enough to matter.
+lede: One short paragraph telling the story.
+org: IRDE, DRDO # optional
+role: Machine Learning Intern # optional
+period: Jul – Oct 2023 # optional, free text
+figure: skies # networks | skies | words | health | coffee
+stats: # optional big numbers
+  - { value: '+15%', label: 'detection accuracy' }
+tags: [Graph neural networks]
+publications: [tuberculosis-icaia] # ids from src/data/publications.yaml
+coda: false # true = quieter closing section, never inverted
+page: false # true once you write a body below: adds /work/<file-name>/
+---
+
+Optional long write-up goes here (shown only when `page: true`).
+```
+
+To add a chapter, copy a file and change `number`. To drop one, delete it.
+A new `figure` drawing means adding a case to `src/components/ChapterFigure.astro`.
+
 ## Projects
 
 One file per project: `src/content/projects/<slug>.mdx`. The file name
@@ -161,14 +199,14 @@ Résumé-only lists, each with an `order` field:
 - `src/data/awards.yaml`: `title`, optional `detail` and `year` (free text, e.g. `'2023, 2024'`)
 - `src/data/certifications.yaml`: `name`, optional `issuer` and `url`
 
-## Home page facts and contact
+## About facts and contact
 
-The facts table under your name (`Now`, `Studying`, ...) is `facts` in
-`src/config/site.ts`. Add, remove or reorder rows freely.
+The About section on the home page uses `about` (a short paragraph) and
+`facts` (the table: Based in, Studying, ...) in `src/config/site.ts`.
 
 `email` is empty on purpose, so it isn't exposed to spam scrapers. While it's
-empty, the Contact section links to your first social link (LinkedIn) instead.
-Fill it in to show your email everywhere.
+empty, the Contact section shows only your social links and CV.
+Fill it in to show your email there and on the CV.
 
 ## Résumé PDF
 
