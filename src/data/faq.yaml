@@ -7,36 +7,36 @@
 
 - id: german
   question: Do you speak German?
-  answer: A little. I'm at A1 and learning.
+  answer: A little! I'm at A1 and working on it.
   home: true
   order: 1
 
 - id: patent
   question: Wait, you have a patent for an espresso brewer?
   answer: |-
-    A patent application, yes: a manual espresso brewer I designed during my B.Tech. It was published as Indian Patent Application No. 202311004209 A in January 2023.
+    Well, a patent application, but yes. It's a manual espresso brewer I designed during my B.Tech., published as Indian Patent Application No. 202311004209 A in January 2023.
 
-    It came out of research where I measured coffee extractions and modelled the data. More on the coffee page.
+    It came out of research where I was measuring coffee and modelling the data. The coffee page has the full story.
   home: true
   order: 2
 
 - id: music
   question: What do you listen to while working?
-  answer: Rock, mostly. AC/DC, Nirvana and Radiohead. There's a music page.
+  answer: Rock, mostly. AC/DC, Nirvana, Radiohead. There's a whole music page if you're curious.
   home: true
   order: 3
 
 - id: coffee
   question: How do you take your coffee?
-  answer: Pour-over, on a V60. The coffee page has more than you probably want to know.
+  answer: Pour-over on a V60. Fair warning, the coffee page goes into detail.
   order: 4
 
 - id: code
   question: Can I see your code?
-  answer: My public projects are on GitHub (github.com/madhvanb). Code from jobs usually can't be shared.
+  answer: My public stuff is on GitHub (github.com/madhvanb). Code from jobs usually has to stay at work, sorry.
   order: 5
 
 - id: site
   question: How did you build this site?
-  answer: With Astro, plain CSS and no colour on purpose. It's hosted for free on GitHub Pages, and the source code is public. The colophon page has the details.
+  answer: Astro, plain CSS, and no colour on purpose. It's hosted for free on GitHub Pages and the code is public. The colophon has the nerdy details.
   order: 6

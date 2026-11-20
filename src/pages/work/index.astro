@@ -14,7 +14,7 @@ import { href } from '@/lib/url';
 
 const projects = await getProjects();
 const groups = [
-  { title: 'Jobs and research', items: projects.filter((p) => p.data.group === 'work') },
+  { title: 'From jobs and research', items: projects.filter((p) => p.data.group === 'work') },
   { title: 'Side projects', items: projects.filter((p) => p.data.group === 'side') },
 ].filter((g) => g.items.length > 0);
 
@@ -23,8 +23,8 @@ const meta = (p: Project) => (p.data.date ? formatYear(p.data.date) : '—');
 
 <BaseLayout title="Work" description="Machine learning work, research and side projects.">
   <PageTitle title="Work">
-    What I've built, what it was for, and what happened. Some are short because the work isn't
-    public.
+    Stuff I've built, what it was for, and how it went. A few are short because the work isn't
+    public yet.
   </PageTitle>
 
   {groups.map((g) => (

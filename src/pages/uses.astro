@@ -8,7 +8,7 @@ const groups = await getUses();
 ---
 
 <SimplePage title="Uses" description="The tools I work with, and the coffee kit.">
-  <p class="lead">The tools I actually use, for work and for coffee.</p>
+  <p class="lead">The stuff I actually use, for work and for coffee.</p>
   {groups.map(({ data }) => (
     <ListBlock title={data.label}>
       <ul class="items">

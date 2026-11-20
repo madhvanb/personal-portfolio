@@ -3,25 +3,25 @@
 
 - id: working
   label: Working
-  text: Anomaly detection on network traffic, as an ML working student at consistec in Saarbrücken.
+  text: Building anomaly detection for network traffic at consistec, as an ML working student.
   order: 1
 
 - id: studying
   label: Studying
-  text: M.Sc. Data Science and Artificial Intelligence at Saarland University.
+  text: My M.Sc. in Data Science and AI at Saarland University.
   order: 2
 
 - id: learning
   label: Learning
-  text: German. Currently A1.
+  text: German. I'm at A1, so please be patient with me.
   order: 3
 
 - id: brewing
   label: Brewing
-  text: Pour-overs on a V60.
+  text: V60 pour-overs.
   order: 4
 
 - id: listening
   label: Listening
-  text: AC/DC, Nirvana, Radiohead.
+  text: AC/DC, Nirvana, Radiohead, on repeat.
   order: 5

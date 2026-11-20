@@ -5,7 +5,7 @@
  *   Now              src/data/now.yaml (items with home: true)
  *   Selected work    featured projects (src/content/projects/)
  *   Notes            latest notes, hidden until there are any
- *   Off the clock    links to Music and Coffee
+ *   Not working      links to Music and Coffee
  *   Questions        src/data/faq.yaml (items with home: true)
  */
 import EntryList from '@/components/EntryList.astro';
@@ -52,7 +52,7 @@ const questions = (await getFaq()).filter((q) => q.data.home);
   </section>
 
   {now.length > 0 && (
-    <Section title="Now" id="now">
+    <Section title="What I'm up to" id="now">
       <a slot="action" href={href('/now/')}>
         More →
       </a>
@@ -68,9 +68,9 @@ const questions = (await getFaq()).filter((q) => q.data.home);
   )}
 
   {work.length > 0 && (
-    <Section title="Selected work" id="work">
+    <Section title="Things I've worked on" id="work">
       <a slot="action" href={href('/work/')}>
-        All work →
+        See all →
       </a>
       <EntryList>
         {work.map((p) => (
@@ -104,7 +104,7 @@ const questions = (await getFaq()).filter((q) => q.data.home);
     </Section>
   )}
 
-  <Section title="Off the clock" id="off">
+  <Section title="When I'm not working" id="off">
     <div class="tiles">
       <a class="tile" href={href('/music/')}>
         <span class="drawing">
@@ -121,16 +121,16 @@ const questions = (await getFaq()).filter((q) => q.data.home);
         </span>
         <span>
           <span class="tile-title">Coffee</span>
-          <span class="muted">V60 pour-overs, some research, and an espresso brewer patent.</span>
+          <span class="muted">V60 pour-overs, a bit of research, and a patent. Yes, really.</span>
         </span>
       </a>
     </div>
   </Section>
 
   {questions.length > 0 && (
-    <Section title="Questions people ask" id="faq">
+    <Section title="Stuff people ask me" id="faq">
       <a slot="action" href={href('/faq/')}>
-        All questions →
+        See all →
       </a>
       <dl class="qa">
         {questions.map(({ id, data }) => (

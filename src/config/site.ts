@@ -34,11 +34,11 @@ export const site = {
    * Home page intro: a greeting and two or three plain sentences.
    * Write it the way you'd introduce yourself to someone at a café.
    */
-  greeting: "Hi, I'm Madhvan.",
+  greeting: "Hey, I'm Madhvan.",
   intro: [
-    'I work on machine learning in Saarbrücken: anomaly detection on network traffic as a working student at consistec, next to an M.Sc. in Data Science and AI at Saarland University.',
-    'Before that: drone detection with graph neural networks at DRDO, a RAG platform for health research, and three years of research on medical ML.',
-    'Outside of that, V60 coffee and loud guitars.',
+    "I do machine learning in Saarbrücken. Right now that's anomaly detection on network traffic at consistec, where I'm a working student, alongside my M.Sc. in Data Science and AI at Saarland University.",
+    'Before this I built drone detection with graph neural networks at DRDO, a RAG tool for health research, and spent three years doing medical ML research back in India.',
+    "When I'm not doing that, I'm probably brewing a V60 or listening to something loud.",
   ],
   /** Résumé summary paragraph. */
   summary:
@@ -51,7 +51,7 @@ export const site = {
    * The small line at the bottom of every page. A little bit of you.
    * Change it whenever; it's meant to be current.
    */
-  footerNote: 'Brewing on a V60 · Playing AC/DC',
+  footerNote: 'Currently: brewing on a V60, AC/DC on the speakers.',
   /**
    * Public contact email. Leave '' to hide it; LinkedIn then becomes the
    * main contact link. Anything here is visible to spam scrapers.

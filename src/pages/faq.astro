@@ -6,8 +6,8 @@ import { getFaq } from '@/lib/content';
 const items = await getFaq();
 ---
 
-<SimplePage title="FAQ" description="Questions people ask me, answered once.">
-  <p class="lead">Questions people ask me, answered once.</p>
+<SimplePage title="FAQ" description="Things people ask me, answered here.">
+  <p class="lead">Things people ask me, answered here so you don't have to.</p>
   <dl class="faq">
     {items.map(({ id, data }) => (
       <div id={id}>

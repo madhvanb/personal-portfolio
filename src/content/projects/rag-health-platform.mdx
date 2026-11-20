@@ -15,13 +15,13 @@ featured: true
 
 ## The problem
 
-Language models write fluent health articles, including fluent wrong ones. The tool needed to stay
-close to its sources and catch claims that weren't backed up.
+Language models are great at writing confident health articles, including confidently wrong ones.
+So the tool had to stick to its sources and catch claims that weren't backed up.
 
 ## What I did
 
 - Built a retrieval-augmented generation (RAG) pipeline: web-scraped sources, an embedding index,
-  and LLaMA as the generator.
-- Added a misinformation check on every generated article.
-- Wrapped it in a Streamlit app and deployed it on AWS, with EC2 for the app, S3 for data and
-  Lambda for scheduled content-generation jobs.
+  and LLaMA writing the drafts.
+- Ran every generated article through a misinformation check.
+- Wrapped it all in a Streamlit app and put it on AWS: EC2 for the app, S3 for data, and Lambda for
+  the scheduled generation jobs.
