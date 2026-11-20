@@ -1,0 +1,111 @@
+---
+/**
+ * /projects/: every project, newest first, with a tag filter.
+ * The filter is progressive enhancement: without JavaScript the full list
+ * still shows and the filter buttons stay hidden.
+ */
+import EntryList from '@/components/EntryList.astro';
+import EntryRow from '@/components/EntryRow.astro';
+import PageTitle from '@/components/PageTitle.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { collectTags, getProjects } from '@/lib/content';
+import { formatYear } from '@/lib/dates';
+import { href } from '@/lib/url';
+
+const projects = await getProjects();
+const tags = collectTags(projects);
+---
+
+<BaseLayout title="Projects" description="Machine learning projects, research and experiments.">
+  <PageTitle title="Projects" count={projects.length}>
+    Things I've built, trained and shipped. Newest first.
+  </PageTitle>
+
+  <div class="filter" data-filter hidden>
+    <span class="label muted" id="filter-label">
+      Filter
+    </span>
+    <div class="buttons label" role="group" aria-labelledby="filter-label">
+      <button type="button" data-tag="" aria-pressed="true">
+        All
+      </button>
+      {tags.map((tag) => (
+        <button type="button" data-tag={tag} aria-pressed="false">
+          {tag}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <EntryList>
+    {projects.map((p) => (
+      <EntryRow
+        href={href(`/projects/${p.id}/`)}
+        meta={formatYear(p.data.date)}
+        title={p.data.title}
+        description={p.data.summary}
+        tags={p.data.tags}
+        note={p.data.status}
+      />
+    ))}
+  </EntryList>
+  <p class="label muted empty" data-empty hidden>
+    No projects with that tag.
+  </p>
+</BaseLayout>
+
+<script>
+  const filter = document.querySelector<HTMLElement>('[data-filter]');
+  const rows = document.querySelectorAll<HTMLElement>('[data-tags]');
+  const empty = document.querySelector<HTMLElement>('[data-empty]');
+
+  if (filter) {
+    filter.hidden = false; // JS is running, so the filter can work.
+    const buttons = filter.querySelectorAll<HTMLButtonElement>('button[data-tag]');
+
+    const apply = (tag: string) => {
+      let shown = 0;
+      rows.forEach((row) => {
+        const match = !tag || (row.dataset.tags ?? '').split('|').includes(tag);
+        row.hidden = !match;
+        if (match) shown++;
+      });
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.tag === tag)));
+      if (empty) empty.hidden = shown > 0;
+    };
+
+    buttons.forEach((b) => b.addEventListener('click', () => apply(b.dataset.tag ?? '')));
+  }
+</script>
+
+<style>
+  .filter {
+    display: flex;
+    gap: var(--space-4);
+    align-items: baseline;
+    margin-bottom: var(--space-6);
+  }
+  .filter[hidden] {
+    display: none;
+  }
+  .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  button {
+    background: none;
+    border: var(--rule);
+    padding: var(--space-1) var(--space-3);
+    cursor: pointer;
+    font: inherit;
+  }
+  button:hover,
+  button[aria-pressed='true'] {
+    background: var(--color-fg);
+    color: var(--color-bg);
+  }
+  .empty {
+    padding-block: var(--space-6);
+  }
+</style>

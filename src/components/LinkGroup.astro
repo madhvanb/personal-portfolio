@@ -1,0 +1,62 @@
+---
+/**
+ * <LinkGroup>: renders the optional `links` object from projects and
+ * publications (code, paper, demo...). Only links that are set appear.
+ *
+ *   <LinkGroup links={project.data.links} />
+ */
+interface Props {
+  links: Partial<Record<LinkKind, string | undefined>>;
+}
+
+type LinkKind = 'code' | 'paper' | 'demo' | 'model' | 'dataset' | 'website';
+
+/** Display order and labels. Add a kind here AND in content.config.ts. */
+const LABELS: [LinkKind, string][] = [
+  ['paper', 'Paper'],
+  ['code', 'Code'],
+  ['demo', 'Demo'],
+  ['model', 'Model'],
+  ['dataset', 'Dataset'],
+  ['website', 'Website'],
+];
+
+const { links } = Astro.props;
+const items = LABELS.flatMap(([kind, label]) => {
+  const url = links[kind];
+  return url ? [{ label, url }] : [];
+});
+---
+
+{items.length > 0 && (
+  <ul class="links label">
+    {items.map(({ label, url }) => (
+      <li>
+        <a href={url} rel="noopener" target="_blank">
+          {label} <span aria-hidden="true">↗</span>
+          <span class="sr-only">(opens in new tab)</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+)}
+
+<style>
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+  }
+  a {
+    display: inline-block;
+    padding: var(--space-1) var(--space-3);
+    border: var(--rule);
+    text-decoration: none;
+  }
+  a:hover {
+    background: var(--color-fg);
+    color: var(--color-bg);
+  }
+</style>

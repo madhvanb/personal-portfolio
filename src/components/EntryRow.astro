@@ -1,0 +1,109 @@
+---
+/**
+ * <EntryRow>: one row in a list of projects or posts. The whole row is a
+ * link and inverts (black ↔ white) on hover.
+ *
+ *   <EntryRow href="/projects/foo/" meta="2026" title="Foo"
+ *             description="One line." tags={['LLMs']} />
+ *
+ * Used by: home page, /projects/, /writing/. Must be inside <EntryList>.
+ */
+import TagList from './TagList.astro';
+
+interface Props {
+  href: string;
+  /** Left column: usually a year or date. */
+  meta: string;
+  title: string;
+  description?: string;
+  tags?: readonly string[];
+  /** Small right-aligned note, e.g. project status. */
+  note?: string | undefined;
+}
+
+const { href, meta, title, description, tags = [], note } = Astro.props;
+---
+
+<li class="row" data-tags={tags.join('|')}>
+  <a {href}>
+    <span class="label meta">{meta}</span>
+    <span class="main">
+      <span class="title">{title}</span>
+      {description && <span class="desc">{description}</span>}
+    </span>
+    <span class="side">
+      <TagList {tags} />
+      {note && <span class="label note">{note}</span>}
+    </span>
+    <span class="arrow" aria-hidden="true">
+      →
+    </span>
+  </a>
+</li>
+
+<style>
+  .row {
+    border-bottom: var(--rule);
+  }
+  .row[hidden] {
+    display: none;
+  }
+  a {
+    display: grid;
+    grid-template-columns: 7rem 1fr minmax(0, 18rem) 1.5rem;
+    gap: var(--space-6);
+    align-items: baseline;
+    padding: var(--space-6) var(--space-3);
+    text-decoration: none;
+  }
+  a:hover,
+  a:focus-visible {
+    background: var(--color-fg);
+    color: var(--color-bg);
+  }
+  /* Tags and note flip with the row; their borders use currentColor. */
+  a:hover :global(.tags li),
+  a:focus-visible :global(.tags li) {
+    border-color: var(--color-bg);
+  }
+  .title {
+    display: block;
+    font-size: var(--text-md);
+    font-weight: 600;
+    line-height: var(--leading-snug);
+  }
+  .desc {
+    display: block;
+    margin-top: var(--space-1);
+    color: var(--color-muted);
+  }
+  a:hover .desc,
+  a:focus-visible .desc {
+    color: inherit;
+  }
+  .side {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    align-items: flex-start;
+  }
+  .arrow {
+    text-align: right;
+  }
+
+  @media (max-width: 52rem) {
+    a {
+      grid-template-columns: 1fr 1.5rem;
+      gap: var(--space-3);
+    }
+    .meta,
+    .main,
+    .side {
+      grid-column: 1;
+    }
+    .arrow {
+      grid-column: 2;
+      grid-row: 1;
+    }
+  }
+</style>

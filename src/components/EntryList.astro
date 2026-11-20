@@ -1,0 +1,18 @@
+---
+/**
+ * <EntryList>: a ruled list wrapper for <EntryRow> items.
+ *   <EntryList> <EntryRow ... /> <EntryRow ... /> </EntryList>
+ */
+---
+
+<ul class="entries">
+  <slot />
+</ul>
+
+<style>
+  .entries {
+    list-style: none;
+    padding: 0;
+    border-top: var(--rule);
+  }
+</style>

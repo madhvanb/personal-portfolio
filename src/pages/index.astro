@@ -1,0 +1,200 @@
+---
+/**
+ * Home page. Sections are numbered automatically, so hiding one (e.g. no
+ * posts yet) never leaves a gap in the numbering.
+ */
+import EntryList from '@/components/EntryList.astro';
+import EntryRow from '@/components/EntryRow.astro';
+import ExperienceItem from '@/components/ExperienceItem.astro';
+import Section from '@/components/Section.astro';
+import { site } from '@/config/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getExperience, getFeaturedProjects, getPosts, getProjects } from '@/lib/content';
+import { formatDate, formatYear } from '@/lib/dates';
+import { href, prettyUrl } from '@/lib/url';
+
+// Featured projects; if none are marked featured, fall back to the latest three.
+const featured = await getFeaturedProjects();
+const work = featured.length > 0 ? featured : (await getProjects()).slice(0, 3);
+const jobs = await getExperience();
+const posts = (await getPosts()).slice(0, 3);
+
+const facts = [
+  { label: 'Role', value: site.role },
+  { label: 'Focus', value: site.focus.join(', ') },
+  { label: 'Based in', value: site.location },
+  { label: 'Status', value: site.status },
+].filter((f) => f.value);
+
+let n = 0;
+const next = () => String(++n).padStart(2, '0');
+---
+
+<BaseLayout>
+  <section class="hero" aria-label="Introduction">
+    <h1>{site.name}</h1>
+    <div class="hero-grid">
+      <p class="intro">{site.intro}</p>
+      <dl class="facts">
+        {facts.map(({ label, value }) => (
+          <div>
+            <dt class="label muted">{label}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  {work.length > 0 && (
+    <Section index={next()} title="Selected work" id="work">
+      <a slot="action" href={href('/projects/')}>
+        All projects →
+      </a>
+      <EntryList>
+        {work.map((p) => (
+          <EntryRow
+            href={href(`/projects/${p.id}/`)}
+            meta={formatYear(p.data.date)}
+            title={p.data.title}
+            description={p.data.summary}
+            tags={p.data.tags}
+          />
+        ))}
+      </EntryList>
+    </Section>
+  )}
+
+  {jobs.length > 0 && (
+    <Section index={next()} title="Experience" id="experience">
+      <a slot="action" href={href('/resume/')}>
+        Full résumé →
+      </a>
+      <ul class="plain">
+        {jobs.map((j) => (
+          <ExperienceItem job={j.data} />
+        ))}
+      </ul>
+    </Section>
+  )}
+
+  {posts.length > 0 && (
+    <Section index={next()} title="Writing" id="writing">
+      <a slot="action" href={href('/writing/')}>
+        All writing →
+      </a>
+      <EntryList>
+        {posts.map((p) => (
+          <EntryRow
+            href={href(`/writing/${p.id}/`)}
+            meta={formatDate(p.data.date)}
+            title={p.data.title}
+            description={p.data.description}
+          />
+        ))}
+      </EntryList>
+    </Section>
+  )}
+
+  <Section index={next()} title="Contact" id="contact">
+    <a class="email" href={`mailto:${site.email}`}>
+      {site.email}
+    </a>
+    <ul class="socials label">
+      {site.socials.map((s) => (
+        <li>
+          <a href={s.url} rel="me noopener">
+            {s.label} <span class="muted">{prettyUrl(s.url)}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </Section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-block: var(--space-16) var(--space-8);
+  }
+  h1 {
+    font-size: var(--text-display);
+    font-weight: 700;
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    text-transform: uppercase;
+    /* Very long names shrink instead of overflowing. */
+    overflow-wrap: anywhere;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: var(--space-12);
+    margin-top: var(--space-12);
+    padding-top: var(--space-6);
+    border-top: var(--rule);
+  }
+  .intro {
+    font-size: var(--text-lg);
+    line-height: var(--leading-snug);
+    letter-spacing: -0.01em;
+    max-width: 30ch;
+  }
+  .facts div {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    gap: var(--space-4);
+    padding-block: var(--space-2);
+    border-bottom: var(--rule);
+  }
+  .facts div:first-child {
+    border-top: var(--rule);
+  }
+  .plain {
+    list-style: none;
+    padding: 0;
+    border-top: var(--rule);
+  }
+  .email {
+    display: inline-block;
+    font-size: var(--text-xl);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+    text-decoration-thickness: 3px;
+  }
+  .email:hover {
+    background: var(--color-fg);
+    color: var(--color-bg);
+    text-decoration: none;
+  }
+  .socials {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    margin-top: var(--space-12);
+    list-style: none;
+    padding: 0;
+    border-top: var(--rule);
+  }
+  .socials a {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-4) 0;
+    border-bottom: var(--rule);
+    text-decoration: none;
+  }
+  .socials a:hover {
+    text-decoration: underline;
+  }
+  .socials .muted {
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  @media (max-width: 52rem) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+  }
+</style>

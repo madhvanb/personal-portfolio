@@ -1,0 +1,11 @@
+# Papers, preprints, workshop talks. Remove the example and leave `[]` if you
+# have none yet. The section is hidden automatically when this list is empty.
+# Field docs: docs/content.md#publications
+
+- id: example-paper
+  title: 'EXAMPLE: An Example Paper Title About Efficient Fine-Tuning'
+  authors: [A. Coauthor, Madhvan, B. Coauthor]
+  venue: Example Workshop @ NeurIPS
+  year: 2025
+  links:
+    paper: https://arxiv.org/

@@ -1,0 +1,79 @@
+---
+/**
+ * <Header>: top bar with name, main navigation and theme toggle.
+ * Nav items come from `site.nav` in src/config/site.ts.
+ */
+import { site } from '@/config/site';
+import { href, isActive } from '@/lib/url';
+import ThemeToggle from './ThemeToggle.astro';
+
+const path = Astro.url.pathname;
+---
+
+<header class="header" data-print="hide">
+  <div class="container bar">
+    <a href={href('/')} class="name" aria-current={isActive(path, '/') ? 'page' : undefined}>
+      {site.name}
+    </a>
+    <nav aria-label="Main">
+      <ul>
+        {site.nav.map((item) => (
+          <li>
+            <a
+              class="label"
+              href={href(item.path)}
+              aria-current={isActive(path, item.path) ? 'page' : undefined}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <ThemeToggle />
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--color-bg);
+    border-bottom: var(--rule);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    min-height: 3.5rem;
+  }
+  .name {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    margin-right: auto;
+  }
+  ul {
+    display: flex;
+    gap: var(--space-6);
+    list-style: none;
+    padding: 0;
+  }
+  nav a {
+    text-decoration: none;
+  }
+  nav a:hover,
+  nav a[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+  }
+  @media (max-width: 30rem) {
+    .bar {
+      gap: var(--space-3);
+    }
+    ul {
+      gap: var(--space-3);
+    }
+  }
+</style>

@@ -1,0 +1,40 @@
+---
+/**
+ * <Footer>: copyright, source link, RSS and back-to-top.
+ */
+import { site } from '@/config/site';
+import { href } from '@/lib/url';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer" data-print="hide">
+  <div class="container row label">
+    <span>
+      © {year} {site.name}
+    </span>
+    <span class="links">
+      <a href={href('/rss.xml')}>RSS</a>
+      {site.sourceUrl && <a href={site.sourceUrl}>Source</a>}
+      <a href="#top">Top ↑</a>
+    </span>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: auto;
+    border-top: var(--rule);
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: var(--space-6);
+  }
+  .links {
+    display: flex;
+    gap: var(--space-6);
+  }
+</style>

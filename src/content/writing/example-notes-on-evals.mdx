@@ -1,0 +1,32 @@
+---
+title: 'Example post: Notes on evaluating LLM systems'
+description: EXAMPLE post showing headings, maths, code and footnotes. Replace or delete.
+date: 2026-02-10
+tags: [LLMs, Evaluation]
+---
+
+This is a placeholder post. It exists to show what posts can contain.
+
+## Maths
+
+Inline maths like $p(y \mid x)$ and display maths both work, written in LaTeX:
+
+$$
+\text{softmax}(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}}
+$$
+
+## Code
+
+```python
+import torch
+
+def accuracy(logits: torch.Tensor, labels: torch.Tensor) -> float:
+    """Fraction of rows where the argmax matches the label."""
+    return (logits.argmax(dim=-1) == labels).float().mean().item()
+```
+
+## Footnotes
+
+Footnotes are supported too.[^1]
+
+[^1]: Like this one.

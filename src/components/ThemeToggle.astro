@@ -1,0 +1,52 @@
+---
+/**
+ * <ThemeToggle>: light/dark switch. Saves the choice in localStorage.
+ * If the visitor never picks, the site follows their OS setting, live.
+ *
+ * Used by: Header.astro
+ */
+---
+
+<button class="toggle label" type="button" data-theme-toggle aria-label="Toggle dark mode">
+  <span class="light-only">Dark</span>
+  <span class="dark-only">Light</span>
+</button>
+
+<script>
+  const root = document.documentElement;
+  const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+
+  const sync = () => button?.setAttribute('aria-pressed', String(root.dataset.theme === 'dark'));
+  sync();
+
+  button?.addEventListener('click', () => {
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    localStorage.setItem('theme', next);
+    sync();
+  });
+
+  // Follow OS changes only until the visitor makes an explicit choice.
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (localStorage.getItem('theme')) return;
+    root.dataset.theme = e.matches ? 'dark' : 'light';
+    sync();
+  });
+</script>
+
+<style>
+  .toggle {
+    background: none;
+    border: var(--rule);
+    padding: var(--space-1) var(--space-2);
+    cursor: pointer;
+  }
+  .toggle:hover {
+    background: var(--color-fg);
+    color: var(--color-bg);
+  }
+  :global([data-theme='dark']) .light-only,
+  :global([data-theme='light']) .dark-only {
+    display: none;
+  }
+</style>

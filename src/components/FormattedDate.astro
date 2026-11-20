@@ -1,0 +1,18 @@
+---
+/**
+ * <FormattedDate>: a <time> element with a consistent display format.
+ *   <FormattedDate date={post.data.date} />              → 04 Mar 2026
+ *   <FormattedDate date={d} format="month" />             → Mar 2026
+ */
+import { formatDate, formatMonthYear, formatYear, isoDate } from '@/lib/dates';
+
+interface Props {
+  date: Date;
+  format?: 'day' | 'month' | 'year';
+}
+
+const { date, format = 'day' } = Astro.props;
+const text = { day: formatDate, month: formatMonthYear, year: formatYear }[format](date);
+---
+
+<time datetime={isoDate(date)}>{text}</time>

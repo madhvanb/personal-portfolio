@@ -1,0 +1,22 @@
+# Skills, grouped. Shown on the résumé. Only list things you'd be happy to be
+# questioned on in an interview. TODO: edit to match you.
+
+- id: ml
+  label: ML / DL
+  order: 1
+  items: [PyTorch, scikit-learn, Hugging Face Transformers, JAX]
+
+- id: llm
+  label: LLMs
+  order: 2
+  items: [Fine-tuning (LoRA), RAG, Evaluation, Prompt design]
+
+- id: data
+  label: Data
+  order: 3
+  items: [Python, SQL, pandas, Polars, Spark]
+
+- id: mlops
+  label: MLOps
+  order: 4
+  items: [Docker, FastAPI, Weights & Biases, MLflow, AWS / GCP]

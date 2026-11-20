@@ -1,0 +1,37 @@
+/*
+ * PRINT: makes "Print / Save as PDF" produce a clean résumé.
+ * Hides navigation and chrome, forces black on white, avoids awkward breaks.
+ */
+@media print {
+  :root,
+  [data-theme='dark'] {
+    --color-bg: #fff;
+    --color-fg: #000;
+    --color-muted: #333;
+    --text-display: 2.25rem;
+    --text-xl: 1.75rem;
+  }
+  @page {
+    margin: 14mm;
+  }
+  body {
+    font-size: 10pt;
+  }
+  [data-print='hide'] {
+    display: none !important;
+  }
+  a {
+    text-decoration: none;
+  }
+  /* Keep individual entries whole; let sections flow across pages. */
+  li {
+    break-inside: avoid;
+  }
+  section {
+    padding-block: 0.75rem !important;
+  }
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+}

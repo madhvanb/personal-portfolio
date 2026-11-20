@@ -1,0 +1,89 @@
+---
+/**
+ * <ArticleLayout>: long-form pages: project case studies and posts.
+ * Adds a title block, metadata, KaTeX styles and the `.prose` typography.
+ *
+ * Slots:
+ *   default   the rendered Markdown/MDX body
+ *   meta      extra content under the title (metrics, links...)
+ */
+import 'katex/dist/katex.min.css';
+import '@/styles/prose.css';
+
+import FormattedDate from '@/components/FormattedDate.astro';
+import TagList from '@/components/TagList.astro';
+import { href } from '@/lib/url';
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  updated?: Date | undefined;
+  tags?: readonly string[];
+  /** Where the "← back" link goes, e.g. { label: 'All projects', path: '/projects/' }. */
+  back: { label: string; path: string };
+  /** Short label line above the title, e.g. "Project · Research". */
+  kicker?: string;
+}
+
+const { title, description, date, updated, tags = [], back, kicker } = Astro.props;
+---
+
+<BaseLayout {title} {description} type="article">
+  <article>
+    <header class="intro">
+      <a class="label back" href={href(back.path)}>
+        ← {back.label}
+      </a>
+      {kicker && <p class="label">{kicker}</p>}
+      <h1>{title}</h1>
+      <p class="lede">{description}</p>
+      <p class="label muted">
+        <FormattedDate {date} />
+        {updated && (
+          <>
+            {' · Updated '}
+            <FormattedDate date={updated} />
+          </>
+        )}
+      </p>
+      <TagList {tags} />
+      <slot name="meta" />
+    </header>
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  article {
+    padding-block: var(--space-12) var(--space-24);
+  }
+  .intro {
+    display: grid;
+    gap: var(--space-4);
+    padding-bottom: var(--space-12);
+    margin-bottom: var(--space-12);
+    border-bottom: var(--rule-thick);
+  }
+  .back {
+    text-decoration: none;
+    width: fit-content;
+  }
+  .back:hover {
+    text-decoration: underline;
+  }
+  h1 {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: var(--tracking-tight);
+    max-width: 20ch;
+  }
+  .lede {
+    font-size: var(--text-md);
+    max-width: var(--measure);
+  }
+</style>

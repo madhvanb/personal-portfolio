@@ -1,0 +1,40 @@
+---
+/**
+ * /projects/<id>/: one page per file in src/content/projects/.
+ * The URL comes from the file name: example-rag-assistant.mdx → /projects/example-rag-assistant/
+ */
+import { render } from 'astro:content';
+import LinkGroup from '@/components/LinkGroup.astro';
+import MetricList from '@/components/MetricList.astro';
+import ArticleLayout from '@/layouts/ArticleLayout.astro';
+import { getProjects, type Project } from '@/lib/content';
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+const kicker = ['Project', data.status, data.role].filter(Boolean).join(' · ');
+---
+
+<ArticleLayout
+  title={data.title}
+  description={data.summary}
+  date={data.date}
+  tags={data.tags}
+  {kicker}
+  back={{ label: 'All projects', path: '/projects/' }}
+>
+  <Fragment slot="meta">
+    <MetricList metrics={data.metrics} />
+    <LinkGroup links={data.links} />
+  </Fragment>
+  <Content />
+</ArticleLayout>

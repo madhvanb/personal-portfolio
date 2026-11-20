@@ -1,0 +1,58 @@
+---
+/**
+ * <Head>: everything inside <head>: title, SEO, social previews, favicon,
+ * RSS link, and the theme script.
+ *
+ * Used by: layouts/BaseLayout.astro (you shouldn't need it directly).
+ */
+import { site } from '@/config/site';
+import { href } from '@/lib/url';
+
+interface Props {
+  /** Page title. The site name is appended automatically, except on the home page. */
+  title?: string | undefined;
+  description?: string | undefined;
+  /** 'article' for posts and case studies, 'website' otherwise. */
+  type?: 'website' | 'article';
+}
+
+const { title, description = site.description, type = 'website' } = Astro.props;
+const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.role}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta name="generator" content={Astro.generator} />
+
+<meta property="og:type" content={type} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta name="twitter:card" content="summary" />
+
+<link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
+<link rel="sitemap" href={href('/sitemap-index.xml')} />
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={`${site.name} — Writing`}
+  href={href('/rss.xml')}
+/>
+<meta name="color-scheme" content="light dark" />
+
+{/*
+  Theme bootstrap. Runs before the page paints so there's no flash of the
+  wrong theme. Order: saved choice > OS setting > light.
+  Kept inline on purpose: it must not wait for a bundle to download.
+*/}
+<script is:inline>
+  (() => {
+    const saved = localStorage.getItem('theme');
+    const system = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = saved ?? system;
+  })();
+</script>

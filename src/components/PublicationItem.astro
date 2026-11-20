@@ -1,0 +1,59 @@
+---
+/**
+ * <PublicationItem>: one paper. Your name (site.name) is bolded in the
+ * author list automatically.
+ */
+import type { CollectionEntry } from 'astro:content';
+import { site } from '@/config/site';
+import LinkGroup from './LinkGroup.astro';
+
+interface Props {
+  paper: CollectionEntry<'publications'>['data'];
+}
+
+const { paper } = Astro.props;
+---
+
+<li class="pub">
+  <span class="label">{paper.year}</span>
+  <div class="main">
+    <h3>{paper.title}</h3>
+    <p class="muted">
+      {paper.authors.map((author, i) => (
+        <>
+          {author === site.name ? <strong>{author}</strong> : author}
+          {i < paper.authors.length - 1 && ', '}
+        </>
+      ))}
+    </p>
+    <p class="label">{paper.venue}</p>
+    <LinkGroup links={paper.links} />
+  </div>
+</li>
+
+<style>
+  .pub {
+    display: grid;
+    grid-template-columns: 12rem 1fr;
+    gap: var(--space-6);
+    align-items: baseline;
+    padding-block: var(--space-4);
+    border-bottom: var(--rule);
+  }
+  h3 {
+    font-size: var(--text-md);
+    font-weight: 600;
+  }
+  .main > * + * {
+    margin-top: var(--space-2);
+  }
+  strong {
+    color: var(--color-fg);
+  }
+  @media (max-width: 40rem) {
+    .pub {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+  }
+</style>

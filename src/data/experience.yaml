@@ -1,0 +1,26 @@
+# Work experience. One entry per role. Shown on the home page and résumé.
+# `id` must be unique. Leave out `end` for your current role.
+# Field docs: docs/content.md#experience
+#
+# TODO: everything below is EXAMPLE data. Replace it with your own.
+
+- id: example-current
+  company: Example Company
+  role: Machine Learning Engineer
+  location: Remote
+  start: 2025-06-01
+  summary: EXAMPLE. Replace with your own role.
+  highlights:
+    - Shipped a retrieval-augmented assistant used by 2,000 people a week; cut median answer time from 4 min to 20 s.
+    - Built the offline eval harness the team now gates every model release on.
+  tags: [PyTorch, LLMs, AWS]
+
+- id: example-internship
+  company: Example Lab
+  role: Research Intern
+  location: City, Country
+  start: 2024-05-01
+  end: 2024-08-31
+  highlights:
+    - Trained and ablated vision transformers for low-data classification; +3.1 pts top-1 over the baseline.
+  tags: [PyTorch, Computer Vision]

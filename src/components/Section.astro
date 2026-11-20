@@ -1,0 +1,62 @@
+---
+/**
+ * <Section>: a numbered page section with a thick top rule.
+ *
+ *   <Section index="01" title="Selected work" id="work">
+ *     ...content...
+ *     <a slot="action" href="...">All projects →</a>   (optional, top-right)
+ *   </Section>
+ */
+interface Props {
+  /** Two-digit number shown before the title, e.g. "01". */
+  index?: string;
+  title: string;
+  /** Anchor id, so the section can be linked to as #id. */
+  id?: string;
+}
+
+const { index, title, id } = Astro.props;
+const headingId = `${id ?? title.toLowerCase().replace(/\W+/g, '-')}-heading`;
+---
+
+<section class="section" id={id} aria-labelledby={headingId}>
+  <div class="head">
+    <h2 id={headingId}>
+      {index && <span class="label index">{index}</span>}
+      {title}
+    </h2>
+    {Astro.slots.has('action') && (
+      <div class="label">
+        <slot name="action" />
+      </div>
+    )}
+  </div>
+  <slot />
+</section>
+
+<style>
+  .section {
+    padding-block: var(--space-12);
+  }
+  .head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-top: var(--space-3);
+    margin-bottom: var(--space-8);
+    border-top: var(--rule-thick);
+  }
+  h2 {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+  .index {
+    font-size: var(--text-sm);
+  }
+</style>

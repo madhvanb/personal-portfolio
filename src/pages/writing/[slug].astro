@@ -1,0 +1,32 @@
+---
+/**
+ * /writing/<id>/: one page per file in src/content/writing/.
+ */
+import { render } from 'astro:content';
+import ArticleLayout from '@/layouts/ArticleLayout.astro';
+import { getPosts, type Post } from '@/lib/content';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<ArticleLayout
+  title={post.data.title}
+  description={post.data.description}
+  date={post.data.date}
+  updated={post.data.updated}
+  tags={post.data.tags}
+  kicker="Writing"
+  back={{ label: 'All writing', path: '/writing/' }}
+>
+  <Content />
+</ArticleLayout>

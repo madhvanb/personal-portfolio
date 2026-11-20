@@ -1,0 +1,30 @@
+---
+/**
+ * <Callout>: a boxed note for use inside MDX posts and case studies.
+ *
+ *   import Callout from '@/components/Callout.astro';
+ *   <Callout title="Note">Text here.</Callout>
+ */
+interface Props {
+  title?: string;
+}
+const { title } = Astro.props;
+---
+
+<aside class="callout">
+  {title && <p class="label">{title}</p>}
+  <div>
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .callout {
+    padding: var(--space-4) var(--space-6);
+    border: var(--rule-thick);
+    font-size: var(--text-base);
+  }
+  .callout > * + * {
+    margin-top: var(--space-2);
+  }
+</style>

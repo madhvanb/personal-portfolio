@@ -1,0 +1,42 @@
+---
+/**
+ * <MetricList>: headline numbers for a project, shown as a ruled grid.
+ *   <MetricList metrics={[{ label: 'AUC', value: '0.84' }]} />
+ */
+interface Props {
+  metrics: readonly { label: string; value: string }[];
+}
+const { metrics } = Astro.props;
+---
+
+{metrics.length > 0 && (
+  <dl class="metrics">
+    {metrics.map(({ label, value }) => (
+      <div>
+        <dt class="label">{label}</dt>
+        <dd>{value}</dd>
+      </div>
+    ))}
+  </dl>
+)}
+
+<style>
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    border-top: var(--rule);
+    border-left: var(--rule);
+  }
+  div {
+    padding: var(--space-4);
+    border-right: var(--rule);
+    border-bottom: var(--rule);
+  }
+  dd {
+    margin-top: var(--space-2);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+</style>

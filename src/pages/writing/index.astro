@@ -1,0 +1,37 @@
+---
+/**
+ * /writing/: all posts, newest first.
+ */
+import EntryList from '@/components/EntryList.astro';
+import EntryRow from '@/components/EntryRow.astro';
+import PageTitle from '@/components/PageTitle.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getPosts } from '@/lib/content';
+import { formatDate } from '@/lib/dates';
+import { href } from '@/lib/url';
+
+const posts = await getPosts();
+---
+
+<BaseLayout title="Writing" description="Notes on machine learning, research and engineering.">
+  <PageTitle title="Writing" count={posts.length}>
+    Notes on machine learning, research and engineering. Also available as{' '}
+    <a href={href('/rss.xml')}>RSS</a>.
+  </PageTitle>
+
+  {posts.length > 0 ? (
+    <EntryList>
+      {posts.map((p) => (
+        <EntryRow
+          href={href(`/writing/${p.id}/`)}
+          meta={formatDate(p.data.date)}
+          title={p.data.title}
+          description={p.data.description}
+          tags={p.data.tags}
+        />
+      ))}
+    </EntryList>
+  ) : (
+    <p class="label muted">Nothing here yet.</p>
+  )}
+</BaseLayout>

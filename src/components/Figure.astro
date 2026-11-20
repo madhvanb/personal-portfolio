@@ -1,0 +1,35 @@
+---
+/**
+ * <Figure>: an image (plot, diagram, sample output) with a caption.
+ * Uses Astro's <Image> so files in src/ are optimised automatically.
+ *
+ *   import Figure from '@/components/Figure.astro';
+ *   import lossCurve from './loss-curve.png';
+ *   <Figure src={lossCurve} alt="Training loss over 10 epochs" caption="Fig. 1 — Loss." />
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  src: ImageMetadata;
+  /** Describe what the image shows. Required for accessibility. */
+  alt: string;
+  caption?: string;
+}
+
+const { src, alt, caption } = Astro.props;
+---
+
+<figure>
+  <Image {src} {alt} />
+  {caption && <figcaption class="label muted">{caption}</figcaption>}
+</figure>
+
+<style>
+  figure :global(img) {
+    border: var(--rule);
+  }
+  figcaption {
+    margin-top: var(--space-2);
+  }
+</style>
