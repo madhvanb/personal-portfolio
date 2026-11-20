@@ -1,0 +1,53 @@
+---
+/** /music/: artists. Text: src/content/pages/music.mdx. List: src/data/music.yaml. */
+import ListBlock from '@/components/ListBlock.astro';
+import SimplePage from '@/layouts/SimplePage.astro';
+import { getMusic, getPage } from '@/lib/content';
+
+const page = await getPage('music');
+const artists = await getMusic();
+---
+
+<SimplePage {page} drawing="record">
+  <ListBlock title="On repeat">
+    <ol class="artists">
+      {artists.map(({ data }, i) => (
+        <li>
+          <span class="label muted">{String(i + 1).padStart(2, '0')}</span>
+          <div>
+            <p class="artist">{data.url ? <a href={data.url}>{data.artist}</a> : data.artist}</p>
+            {data.album && <p class="album">{data.album}</p>}
+            {data.note && <p class="muted">{data.note}</p>}
+          </div>
+        </li>
+      ))}
+    </ol>
+  </ListBlock>
+</SimplePage>
+
+<style>
+  .artists {
+    list-style: none;
+    padding: 0;
+  }
+  li {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    align-items: baseline;
+    padding-block: var(--space-6);
+    border-bottom: var(--rule);
+  }
+  .artist {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: var(--tracking-tight);
+  }
+  .album {
+    margin-top: var(--space-3);
+    font-style: italic;
+  }
+  li p + p {
+    margin-top: var(--space-1);
+  }
+</style>

@@ -1,0 +1,27 @@
+---
+title: A RAG platform for health research
+summary: A Streamlit app that researches health topics and drafts articles with LLaMA, then checks the drafts for misinformation.
+date: 2023-03-31
+order: 3
+group: work
+org: Insignia Consultancy Solutions
+role: Data science intern
+status: shipped
+figure: words
+tags: [LLaMA, RAG, Streamlit, AWS]
+featured: true
+# TODO: how the misinformation check worked, and one thing that surprised you.
+---
+
+## The problem
+
+Language models are great at writing confident health articles, including confidently wrong ones.
+So the tool had to stick to its sources and catch claims that weren't backed up.
+
+## What I did
+
+- Built a retrieval-augmented generation (RAG) pipeline: web-scraped sources, an embedding index,
+  and LLaMA writing the drafts.
+- Ran every generated article through a misinformation check.
+- Wrapped it all in a Streamlit app and put it on AWS: EC2 for the app, S3 for data, and Lambda for
+  the scheduled generation jobs.

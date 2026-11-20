@@ -1,0 +1,7 @@
+# Favourite cafés on the /coffee/ page. Hidden while empty. Example:
+# - id: some-cafe
+#   name: Café Name
+#   city: Saarbrücken
+#   note: One line on why.
+#   url: https://...
+[]

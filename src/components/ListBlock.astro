@@ -1,0 +1,47 @@
+---
+/**
+ * <ListBlock>: a titled, ruled block used on the personal pages.
+ *   <ListBlock title="Recipe"> ...rows... </ListBlock>
+ * Each direct child row should use the `.kv` (label | value) class from
+ * this component, or any markup of your own.
+ */
+interface Props {
+  title?: string;
+}
+const { title } = Astro.props;
+---
+
+<section class="block">
+  {title && <h2 class="label">{title}</h2>}
+  <slot />
+</section>
+
+<style>
+  .block {
+    margin-top: var(--space-12);
+  }
+  h2 {
+    padding-bottom: var(--space-3);
+    border-bottom: var(--rule-thick);
+  }
+  /* label | value rows */
+  .block :global(.kv) {
+    display: grid;
+    grid-template-columns: var(--meta-col) minmax(0, 1fr);
+    gap: var(--space-1) var(--space-6);
+    padding-block: var(--space-4);
+    border-bottom: var(--rule);
+  }
+  .block :global(.kv > :first-child) {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    padding-top: 0.2em;
+  }
+  @media (max-width: 40rem) {
+    .block :global(.kv) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

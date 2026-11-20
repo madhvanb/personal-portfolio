@@ -1,0 +1,94 @@
+---
+/**
+ * <SimplePage>: layout for the personal pages (Now, Music, Coffee, Uses,
+ * FAQ, Colophon). A title block with an optional line drawing, then content.
+ *
+ *   <SimplePage page={entry} drawing="v60">
+ *     ...structured sections...
+ *   </SimplePage>
+ *
+ * `page` is an entry from src/content/pages/; its Markdown body is rendered
+ * as the intro text. Pages without an entry can pass title/description.
+ */
+import 'katex/dist/katex.min.css';
+import '@/styles/prose.css';
+import { render, type CollectionEntry } from 'astro:content';
+import FormattedDate from '@/components/FormattedDate.astro';
+import LineDrawing from '@/components/LineDrawing.astro';
+import type { Kind } from '@/lib/drawings';
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  page?: CollectionEntry<'pages'>;
+  title?: string;
+  description?: string;
+  drawing?: Kind;
+}
+
+const { page, drawing } = Astro.props;
+const title = page?.data.title ?? Astro.props.title ?? '';
+const description = page?.data.description ?? Astro.props.description ?? '';
+const updated = page?.data.updated;
+const Body = page ? (await render(page)).Content : null;
+---
+
+<BaseLayout {title} {description}>
+  <header class:list={['head', { 'has-drawing': drawing }]}>
+    <div>
+      <h1>{title}</h1>
+      {updated && (
+        <p class="label muted updated">
+          Last updated <FormattedDate date={updated} />
+        </p>
+      )}
+      {Body && (
+        <div class="prose intro">
+          <Body />
+        </div>
+      )}
+    </div>
+    {drawing && (
+      <div class="drawing">
+        <LineDrawing kind={drawing} />
+      </div>
+    )}
+  </header>
+  <div class="content">
+    <slot />
+  </div>
+</BaseLayout>
+
+<style>
+  .head {
+    display: grid;
+    gap: var(--space-8);
+    padding-block: var(--space-12) var(--space-8);
+  }
+  h1 {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: var(--tracking-tight);
+  }
+  .updated {
+    margin-top: var(--space-3);
+  }
+  .intro {
+    margin-top: var(--space-6);
+  }
+  .drawing {
+    width: min(100%, 11rem);
+  }
+  .content {
+    padding-bottom: var(--space-24);
+  }
+  @media (min-width: 52rem) {
+    .has-drawing {
+      grid-template-columns: minmax(0, 1fr) 14rem;
+      align-items: start;
+    }
+    .drawing {
+      width: 100%;
+    }
+  }
+</style>

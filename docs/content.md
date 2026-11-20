@@ -15,48 +15,51 @@ the file and field. Nothing gets silently skipped.
 > is marked `TODO` in a comment in the relevant file, never invented.
 > Search the repo for `TODO` to see what's left to fill in.
 
-## Home page story (chapters)
+## Home page
 
-The home page is a story, not a résumé. It opens with one question
-(`hero.question` in `src/config/site.ts`, "What doesn't belong here?") and
-answers it in chapters, one file each in `src/content/chapters/`:
+The home page is built from:
 
-| File              | Theme    | Source                         |
-| ----------------- | -------- | ------------------------------ |
-| `01-networks.mdx` | Networks | consistec: anomaly detection   |
-| `02-skies.mdx`    | Skies    | DRDO: GNN drone detection      |
-| `03-words.mdx`    | Words    | Insignia: RAG + misinformation |
-| `04-health.mdx`   | Health   | Research assistant + papers    |
-| `05-coffee.mdx`   | Coffee   | Coda: TDS research + patent    |
+- `greeting` and `intro` (a list of short paragraphs) in `src/config/site.ts`.
+- **Now**: items in `src/data/now.yaml` with `home: true`.
+- **Selected work**: projects with `featured: true`.
+- **Notes**: the latest three, hidden until you publish one.
+- **Off the clock**: links to the Music and Coffee pages.
+- **Questions people ask**: items in `src/data/faq.yaml` with `home: true` (keep it to 3).
 
-```mdx
----
-number: 2 # order in the story; even numbers are shown inverted
-theme: Skies # the huge word
-title: Spotting drones in crowded airspace, fast enough to matter.
-lede: One short paragraph telling the story.
-org: IRDE, DRDO # optional
-role: Machine Learning Intern # optional
-period: Jul – Oct 2023 # optional, free text
-figure: skies # networks | skies | words | health | coffee
-stats: # optional big numbers
-  - { value: '+15%', label: 'detection accuracy' }
-tags: [Graph neural networks]
-publications: [tuberculosis-icaia] # ids from src/data/publications.yaml
-coda: false # true = quieter closing section, never inverted
-page: false # true once you write a body below: adds /work/<file-name>/
----
+The small line at the bottom of every page is `footerNote` in `site.ts`.
 
-Optional long write-up goes here (shown only when `page: true`).
-```
+## Personal pages
 
-To add a chapter, copy a file and change `number`. To drop one, delete it.
-A new `figure` drawing means adding a case to `src/components/ChapterFigure.astro`.
+| Page         | Text (Markdown)                  | Lists (YAML)                                                         |
+| ------------ | -------------------------------- | -------------------------------------------------------------------- |
+| `/now/`      | `src/content/pages/now.mdx`      | `src/data/now.yaml`                                                  |
+| `/music/`    | `src/content/pages/music.mdx`    | `src/data/music.yaml`                                                |
+| `/coffee/`   | `src/content/pages/coffee.mdx`   | `src/data/brews.yaml`, `cafes.yaml`, patent from `publications.yaml` |
+| `/uses/`     | none                             | `src/data/uses.yaml`                                                 |
+| `/faq/`      | none                             | `src/data/faq.yaml`                                                  |
+| `/colophon/` | `src/content/pages/colophon.mdx` | none                                                                 |
+
+Optional fields only appear once filled in. For example, a brew shows only
+the recipe fields you've set, and the cafés section is hidden while
+`cafes.yaml` is empty (the build prints a harmless warning about that).
+
+Update `updated:` in `now.mdx` whenever you change your now page.
+
+> **Leaving yourself notes:** put `# TODO` comments in the frontmatter (between
+> the `---` lines), not `{/* */}` comments in the body. Prettier mangles
+> multi-line MDX comments and breaks the build.
 
 ## Projects
 
 One file per project: `src/content/projects/<slug>.mdx`. The file name
-becomes the URL: `rag-assistant.mdx` → `/projects/rag-assistant/`.
+becomes the URL: `rag-assistant.mdx` → `/work/rag-assistant/`.
+
+Extra fields: `group: work | side` (which list on /work/), `org`, `figure`
+(a line drawing: networks, skies, words, health, tds, record, v60) and
+`publications` (ids from `publications.yaml`, listed under the write-up).
+
+A good write-up: the problem, what you did, the result, and what you'd do
+differently. Reviewers value the last part most.
 
 ```mdx
 ---
@@ -90,9 +93,11 @@ why, how did you **measure** it, and what would you do next. Short is fine.
 
 If no project is marked `featured`, the home page shows the first three.
 
-## Writing
+## Notes
 
-`src/content/writing/<slug>.mdx` → `/writing/<slug>/`. Posts also appear in
+`src/content/writing/<slug>.mdx` → `/notes/<slug>/`. The Notes menu item
+appears once there's a published note. `template-post.mdx` is a draft that
+shows what notes can contain (maths, code, footnotes). Posts also appear in
 the RSS feed at `/rss.xml`.
 
 ```mdx

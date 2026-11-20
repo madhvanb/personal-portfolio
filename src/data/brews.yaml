@@ -1,0 +1,19 @@
+# Coffee recipes on the /coffee/ page. Only `name` and `method` are required;
+# every other field only shows when it's filled in.
+#
+# TODO: your actual V60 recipe, e.g.
+#   beans: Ethiopia, washed, light roast
+#   dose: 15 g
+#   water: 250 g
+#   grind: medium-fine
+#   temperature: 94 °C
+#   time: 3:00
+#   steps:
+#     - Bloom with 45 g for 45 s.
+#     - Pour to 150 g in slow circles.
+#     - Pour to 250 g, swirl, let it drain.
+
+- id: daily-v60
+  name: My V60
+  method: Pour-over, Hario V60
+  order: 1

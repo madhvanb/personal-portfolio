@@ -3,8 +3,8 @@
  * <Header>: sticky top bar with name, main navigation and theme toggle.
  * Nav items come from `site.nav` in src/config/site.ts.
  *
- * Phones (< 40rem): two rows: name + toggle, then the nav as three equal
- * cells. Wider: a single row.
+ * Phones (< 40rem): two rows: name + toggle, then the nav as a strip that
+ * scrolls sideways if it doesn't fit. Wider: a single row.
  */
 import { site } from '@/config/site';
 import { getPosts } from '@/lib/content';
@@ -107,14 +107,24 @@ const nav = site.nav.filter((item) => item.hideIfEmpty !== 'writing' || hasPosts
       margin-left: calc(-1 * var(--gutter-left));
       margin-right: calc(-1 * var(--gutter-right));
       border-top: var(--rule);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    nav::-webkit-scrollbar {
+      display: none;
     }
     ul {
-      display: grid;
-      grid-auto-columns: 1fr;
-      grid-auto-flow: column;
+      min-width: 100%;
+      width: max-content;
+    }
+    li {
+      flex: 1 0 auto;
     }
     li + li {
       border-left: var(--rule);
+    }
+    nav a {
+      padding-inline: var(--space-4);
     }
   }
 </style>

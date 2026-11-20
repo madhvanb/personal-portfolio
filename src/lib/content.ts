@@ -4,9 +4,8 @@
  * Pages should call these instead of `getCollection()` directly, so filtering
  * (drafts) and sorting rules live in one place and stay consistent.
  */
-import { getCollection, getEntries, type CollectionEntry } from 'astro:content';
+import { getCollection, getEntries, getEntry, type CollectionEntry } from 'astro:content';
 
-export type Chapter = CollectionEntry<'chapters'>;
 export type Project = CollectionEntry<'projects'>;
 export type Post = CollectionEntry<'writing'>;
 
@@ -19,17 +18,6 @@ const newestFirst = (a: Post, b: Post): number => b.data.date.valueOf() - a.data
 const byOrder = <T extends { data: { order: number } }>(a: T, b: T): number =>
   a.data.order - b.data.order;
 
-/** Story chapters in order, with their referenced publications resolved. */
-export async function getChapters() {
-  const chapters = (await getCollection('chapters')).sort((a, b) => a.data.number - b.data.number);
-  return Promise.all(
-    chapters.map(async (chapter) => ({
-      chapter,
-      papers: (await getEntries(chapter.data.publications)).map((p) => p.data),
-    })),
-  );
-}
-
 /** By `order` (lower first), then date (newest first, undated last). */
 const byOrderThenDate = (a: Project, b: Project): number =>
   a.data.order - b.data.order ||
@@ -37,6 +25,11 @@ const byOrderThenDate = (a: Project, b: Project): number =>
 
 export async function getProjects(): Promise<Project[]> {
   return (await getCollection('projects', isVisible)).sort(byOrderThenDate);
+}
+
+/** Papers referenced by a project, resolved to their data. */
+export async function getProjectPapers(project: Project) {
+  return (await getEntries(project.data.publications)).map((p) => p.data);
 }
 
 export async function getFeaturedProjects(): Promise<Project[]> {
@@ -86,7 +79,21 @@ export async function getCertifications(): Promise<CollectionEntry<'certificatio
   return (await getCollection('certifications')).sort(byOrder);
 }
 
-/** Every distinct tag across projects, alphabetical. Powers the filter on /projects/. */
-export function collectTags(entries: { data: { tags: string[] } }[]): string[] {
-  return [...new Set(entries.flatMap((e) => e.data.tags))].sort((a, b) => a.localeCompare(b));
+/** Generic "sorted by order" getter for the small YAML collections. */
+async function ordered<C extends 'now' | 'music' | 'brews' | 'cafes' | 'uses' | 'faq'>(name: C) {
+  return (await getCollection(name)).sort(byOrder);
+}
+
+export const getNow = () => ordered('now');
+export const getMusic = () => ordered('music');
+export const getBrews = () => ordered('brews');
+export const getCafes = () => ordered('cafes');
+export const getUses = () => ordered('uses');
+export const getFaq = () => ordered('faq');
+
+/** A free-text page from src/content/pages/ by file name, e.g. getPage('now'). */
+export async function getPage(id: string) {
+  const page = await getEntry('pages', id);
+  if (!page) throw new Error(`Missing src/content/pages/${id}.mdx`);
+  return page;
 }

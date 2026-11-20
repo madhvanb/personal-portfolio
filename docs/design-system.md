@@ -19,7 +19,7 @@ All values live in `src/styles/tokens.css`. Components only use variables.
 
 These roles are built from two raw inks, `--ink` and `--paper`. Dark mode
 swaps the inks. The `.invert` class swaps the roles for one block, which is how
-the home page alternates white and black chapters. Anything inside an
+inverted blocks work. Anything inside an
 inverted block that uses the roles (text, `--rule` lines, tags, buttons)
 flips automatically.
 
@@ -46,8 +46,8 @@ flips automatically.
 - **Hover = inversion.** Rows, buttons and tags flip black ↔ white
   instantly. No fades.
 - **Focus** is always a 3px outline. It's never removed.
-- **Motion**: deliberately minimal. Smooth scrolling, and the chapter
-  drawings drawing themselves once as they scroll into view. Both are
+- **Motion**: deliberately minimal. Smooth scrolling, and the
+  line drawings drawing themselves once as they scroll into view. Both are
   switched off when the visitor asks for reduced motion, and the drawings
   show complete without JavaScript.
 
@@ -84,14 +84,11 @@ hover)`). On iPhone/iPad, a tap shows the inverted state while pressed
 
 ## Patterns
 
-- **Story chapters** on the home page: chapter label row, a huge one-word
-  theme, then the story on the left and a line drawing on the right
-  (drawing first on phones). Even chapters are inverted. Every drawing makes
-  the same point: most of the picture is ordinary, one thing is marked.
-- **"Now reading" marker**: the current chapter's name runs vertically in
-  the left margin on tablets and laptops, using `mix-blend-mode: difference`
-  so it reads on both black and white sections.
-
+- **Tone**: quiet. Sentence-case headings, one big greeting, lots of space.
+  Personality comes from the content (music, coffee, the FAQ) and small
+  touches (line drawings, the footer note, the 404), not from loud type.
+- **Line drawings**: one per project and personal page. Most of each drawing
+  is ordinary; one part is marked.
 - **Numbered sections** (`01 SELECTED WORK`) with a thick top rule. Numbers
   are computed, so hiding a section never leaves a gap.
 - **Ruled lists** for projects, posts and jobs: a table-like grid with a

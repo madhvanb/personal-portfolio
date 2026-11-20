@@ -1,57 +1,118 @@
 ---
 /**
- * /work/<chapter>/: the long version of a story chapter.
- * Only generated for chapters with `page: true` in their frontmatter, i.e.
- * once you've written a body for them.
+ * /work/<id>/: one page per file in src/content/projects/.
+ * The URL comes from the file name: gnn-drone-detection.mdx → /work/gnn-drone-detection/
+ *
+ * Page = title block (org, role, numbers, links, drawing) + the MDX write-up
+ * + related papers + links to the previous / next project.
  */
 import { render } from 'astro:content';
-import ChapterFigure from '@/components/ChapterFigure.astro';
+import LineDrawing from '@/components/LineDrawing.astro';
+import LinkGroup from '@/components/LinkGroup.astro';
+import MetricList from '@/components/MetricList.astro';
 import PaperList from '@/components/PaperList.astro';
-import StatGrid from '@/components/StatGrid.astro';
 import ArticleLayout from '@/layouts/ArticleLayout.astro';
-import { getChapters } from '@/lib/content';
+import { getProjectPapers, getProjects, type Project } from '@/lib/content';
+import { href } from '@/lib/url';
 
 export async function getStaticPaths() {
-  const chapters = await getChapters();
-  return chapters
-    .filter(({ chapter }) => chapter.data.page)
-    .map(({ chapter, papers }) => ({ params: { slug: chapter.id }, props: { chapter, papers } }));
+  const projects = await getProjects();
+  return projects.map((project, i) => ({
+    params: { slug: project.id },
+    props: { project, prev: projects[i - 1], next: projects[i + 1] },
+  }));
 }
 
-const { chapter, papers } = Astro.props;
-const { data } = chapter;
-const { Content } = await render(chapter);
-const kicker = [
-  `Chapter ${String(data.number).padStart(2, '0')}`,
-  data.theme,
-  data.org,
-  data.period,
-]
+interface Props {
+  project: Project;
+  prev?: Project | undefined;
+  next?: Project | undefined;
+}
+
+const { project, prev, next } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+const papers = await getProjectPapers(project);
+const kicker = [data.org ?? 'Side project', data.role, data.status?.replace('-', ' ')]
   .filter(Boolean)
   .join(' · ');
 ---
 
 <ArticleLayout
   title={data.title}
-  description={data.lede}
+  description={data.summary}
+  date={data.date}
   tags={data.tags}
   {kicker}
-  back={{ label: 'Back to the story', path: '/#work' }}
+  back={{ label: 'All work', path: '/work/' }}
 >
   <Fragment slot="meta">
-    <StatGrid stats={data.stats} />
+    <MetricList metrics={data.metrics} />
+    <LinkGroup links={data.links} />
     {data.figure && (
-      <div class="fig">
-        <ChapterFigure kind={data.figure} />
+      <div class="drawing">
+        <LineDrawing kind={data.figure} />
       </div>
     )}
   </Fragment>
   <Content />
-  <PaperList {papers} />
+  {papers.length > 0 && (
+    <>
+      <h2>Papers</h2>
+      <PaperList {papers} />
+    </>
+  )}
+  <nav class="pager label" aria-label="More work">
+    {prev ? (
+      <a href={href(`/work/${prev.id}/`)}>
+        <span class="muted">← Previous</span>
+        <span class="t">{prev.data.title}</span>
+      </a>
+    ) : (
+      <span />
+    )}
+    {next && (
+      <a class="next" href={href(`/work/${next.id}/`)}>
+        <span class="muted">Next →</span>
+        <span class="t">{next.data.title}</span>
+      </a>
+    )}
+  </nav>
 </ArticleLayout>
 
 <style>
-  .fig {
-    width: min(100%, 18rem);
+  .drawing {
+    width: min(100%, 12rem);
+  }
+  .pager {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-16) !important;
+    padding-top: var(--space-4);
+    border-top: var(--rule-thick);
+  }
+  .pager a {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-height: var(--tap);
+    text-decoration: none;
+  }
+  .pager .next {
+    text-align: right;
+    align-items: flex-end;
+  }
+  .t {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  @media (hover: hover) {
+    .pager a:hover .t {
+      text-decoration: underline;
+    }
   }
 </style>

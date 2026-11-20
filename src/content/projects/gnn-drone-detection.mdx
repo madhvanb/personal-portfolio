@@ -1,0 +1,31 @@
+---
+title: Drone detection with graph neural networks
+summary: Real-time drone detection and tracking with GNNs. 15% more accurate than before, and 40% faster after pruning.
+date: 2023-10-31
+order: 2
+group: work
+org: IRDE, DRDO
+role: ML intern
+status: shipped
+figure: skies
+tags: [Graph neural networks, Tracking, Model pruning]
+featured: true
+metrics:
+  - { label: 'Detection accuracy', value: '+15%' }
+  - { label: 'Detection time', value: '−40%' }
+# TODO: what the graph represented (e.g. sensor tracks as nodes), what the
+# 15% was measured against, and what you'd do differently.
+---
+
+## The problem
+
+Spot drones in real time, in airspace full of other stuff.
+
+## What I did
+
+First I built graph neural network models for detection and tracking. That got detection accuracy
+up by 15%.
+
+Then I made them fast. I pruned the model and reworked the data pipeline, and detection time dropped
+by 40%. That's the difference between a model that works and one that can actually keep up with busy
+airspace.

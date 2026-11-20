@@ -6,9 +6,9 @@
  * a typo, `npm run dev` / `npm run build` stops with a message naming the file
  * and field. That's what keeps content edits from silently breaking pages.
  *
- *   chapters     src/content/chapters/*.mdx    the home page story, one file per chapter
- *   projects     src/content/projects/*.mdx    one file per project (case study)
- *   writing      src/content/writing/*.mdx     one file per post
+ *   projects     src/content/projects/*.mdx    one file per project (case study) → /work/
+ *   writing      src/content/writing/*.mdx     one file per note → /notes/
+ *   pages        src/content/pages/*.mdx       free text for Now, Music, Coffee, Colophon...
  *   experience   src/data/experience.yaml      list of jobs
  *   education    src/data/education.yaml       list of degrees
  *   publications src/data/publications.yaml   papers, chapters, patents (can be empty)
@@ -16,12 +16,19 @@
  *   languages    src/data/languages.yaml      spoken languages
  *   awards       src/data/awards.yaml         awards and activities
  *   certifications src/data/certifications.yaml
+ *   now          src/data/now.yaml            what you're up to (home + /now/)
+ *   music        src/data/music.yaml          artists (/music/)
+ *   brews        src/data/brews.yaml          coffee recipes (/coffee/)
+ *   cafes        src/data/cafes.yaml          favourite cafés (/coffee/)
+ *   uses         src/data/uses.yaml           tools and gear (/uses/)
+ *   faq          src/data/faq.yaml            questions people ask (/faq/)
  *
  * Field-by-field docs: docs/content.md
  */
 import { defineCollection, reference } from 'astro:content';
 import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { DRAWINGS } from './lib/drawings';
 
 /** Optional external links. Only the ones you fill in are shown. */
 const links = z
@@ -35,41 +42,6 @@ const links = z
   })
   .default({});
 
-/** Headline numbers, e.g. { value: "+15%", label: "detection accuracy" }. */
-const stats = z.array(z.object({ value: z.string(), label: z.string() })).default([]);
-
-const chapters = defineCollection({
-  loader: glob({ base: './src/content/chapters', pattern: '**/*.{md,mdx}' }),
-  schema: z.object({
-    /** Position in the story. Shown as "01", "02"... */
-    number: z.number().int().positive(),
-    /** One big word, e.g. "Skies". */
-    theme: z.string(),
-    /** The chapter's headline: one sentence about what you did. */
-    title: z.string(),
-    /** One short paragraph telling the story. */
-    lede: z.string(),
-    /** Where and when, shown as small labels. */
-    org: z.string().optional(),
-    role: z.string().optional(),
-    period: z.string().optional(),
-    /** Which line drawing to show. See src/components/ChapterFigure.astro. */
-    figure: z.enum(['networks', 'skies', 'words', 'health', 'coffee']).optional(),
-    stats,
-    tags: z.array(z.string()).default([]),
-    /** Papers / patents to list under this chapter (ids from publications.yaml). */
-    publications: z.array(reference('publications')).default([]),
-    /** A short closing section rather than a full chapter. */
-    coda: z.boolean().default(false),
-    /**
-     * Set true once the MDX body below the frontmatter has a real write-up;
-     * the chapter then gets its own page at /work/<file-name>/ and a
-     * "Read the full chapter" link on the home page.
-     */
-    page: z.boolean().default(false),
-  }),
-});
-
 const projects = defineCollection({
   loader: glob({ base: './src/content/projects', pattern: '**/*.{md,mdx}' }),
   schema: z.object({
@@ -80,8 +52,16 @@ const projects = defineCollection({
     date: z.coerce.date().optional(),
     /** Manual sort position: lower comes first. Ties are broken by date, newest first. */
     order: z.number().default(100),
-    /** What you did on it, e.g. "Solo", "Lead, team of 3". */
+    /** What you did on it, e.g. "Solo", "Lead, team of 3", "ML Intern". */
     role: z.string().optional(),
+    /** Where, e.g. "DRDO" or "consistec". Leave out for personal projects. */
+    org: z.string().optional(),
+    /** "work" = from jobs and research, shown first; "side" = side projects. */
+    group: z.enum(['work', 'side']).default('side'),
+    /** Line drawing shown on the project page. See src/components/LineDrawing.astro. */
+    figure: z.enum(DRAWINGS).optional(),
+    /** Related papers / patents (ids from src/data/publications.yaml). */
+    publications: z.array(reference('publications')).default([]),
     status: z.enum(['shipped', 'research', 'in-progress', 'archived']).optional(),
     tags: z.array(z.string()).default([]),
     /** Featured projects appear on the home page. */
@@ -197,8 +177,100 @@ const certifications = defineCollection({
   }),
 });
 
+/** Free-text pages (Now, Music, Coffee, Colophon...). The body is the page text. */
+const pages = defineCollection({
+  loader: glob({ base: './src/content/pages', pattern: '**/*.{md,mdx}' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    /** Shown as "Last updated". Useful on /now/. */
+    updated: z.coerce.date().optional(),
+  }),
+});
+
+const now = defineCollection({
+  loader: file('src/data/now.yaml'),
+  schema: z.object({
+    /** Short label, e.g. "Working", "Learning", "Brewing". */
+    label: z.string(),
+    text: z.string(),
+    /** Show on the home page too (keep it to 3-5). */
+    home: z.boolean().default(true),
+    order: z.number().default(0),
+  }),
+});
+
+const music = defineCollection({
+  loader: file('src/data/music.yaml'),
+  schema: z.object({
+    artist: z.string(),
+    /** Your favourite album, if you want to name one. */
+    album: z.string().optional(),
+    /** One line in your own words. */
+    note: z.string().optional(),
+    url: z.url().optional(),
+    order: z.number().default(0),
+  }),
+});
+
+const brews = defineCollection({
+  loader: file('src/data/brews.yaml'),
+  schema: z.object({
+    name: z.string(),
+    method: z.string(),
+    /** Every field below is optional; only filled ones are shown. */
+    beans: z.string().optional(),
+    dose: z.string().optional(),
+    water: z.string().optional(),
+    grind: z.string().optional(),
+    temperature: z.string().optional(),
+    time: z.string().optional(),
+    steps: z.array(z.string()).default([]),
+    note: z.string().optional(),
+    order: z.number().default(0),
+  }),
+});
+
+const cafes = defineCollection({
+  loader: file('src/data/cafes.yaml'),
+  schema: z.object({
+    name: z.string(),
+    city: z.string(),
+    note: z.string().optional(),
+    url: z.url().optional(),
+    order: z.number().default(0),
+  }),
+});
+
+const uses = defineCollection({
+  loader: file('src/data/uses.yaml'),
+  schema: z.object({
+    label: z.string(),
+    items: z.array(z.object({ name: z.string(), note: z.string().optional() })),
+    order: z.number().default(0),
+  }),
+});
+
+const faq = defineCollection({
+  loader: file('src/data/faq.yaml'),
+  schema: z.object({
+    question: z.string(),
+    /** Plain text. Blank lines start new paragraphs. */
+    answer: z.string(),
+    /** Show on the home page (keep it to 3). */
+    home: z.boolean().default(false),
+    order: z.number().default(0),
+  }),
+});
+
 export const collections = {
-  chapters,
+  pages,
+  now,
+  music,
+  brews,
+  cafes,
+  uses,
+  faq,
   projects,
   writing,
   experience,

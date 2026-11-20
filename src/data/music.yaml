@@ -1,0 +1,16 @@
+# Artists on the /music/ page. `album` and `note` are optional: fill them in
+# with your own favourites and a line in your own words.
+
+- id: acdc
+  artist: AC/DC
+  order: 1
+  # TODO album: e.g. your favourite record
+  # TODO note: one line on why
+
+- id: nirvana
+  artist: Nirvana
+  order: 2
+
+- id: radiohead
+  artist: Radiohead
+  order: 3

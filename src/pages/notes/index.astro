@@ -1,6 +1,6 @@
 ---
 /**
- * /writing/: all posts, newest first.
+ * /notes/: all posts, newest first.
  */
 import EntryList from '@/components/EntryList.astro';
 import EntryRow from '@/components/EntryRow.astro';
@@ -13,8 +13,8 @@ import { href } from '@/lib/url';
 const posts = await getPosts();
 ---
 
-<BaseLayout title="Writing" description="Notes on machine learning, research and engineering.">
-  <PageTitle title="Writing" count={posts.length}>
+<BaseLayout title="Notes" description="Notes on machine learning, research and engineering.">
+  <PageTitle title="Notes" count={posts.length}>
     Notes on machine learning, research and engineering. Also available as{' '}
     <a href={href('/rss.xml')}>RSS</a>.
   </PageTitle>
@@ -23,7 +23,7 @@ const posts = await getPosts();
     <EntryList>
       {posts.map((p) => (
         <EntryRow
-          href={href(`/writing/${p.id}/`)}
+          href={href(`/notes/${p.id}/`)}
           meta={formatDate(p.data.date)}
           title={p.data.title}
           description={p.data.description}

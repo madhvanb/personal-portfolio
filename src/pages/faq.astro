@@ -1,0 +1,48 @@
+---
+/** /faq/: questions people ask. List: src/data/faq.yaml. */
+import SimplePage from '@/layouts/SimplePage.astro';
+import { getFaq } from '@/lib/content';
+
+const items = await getFaq();
+---
+
+<SimplePage title="FAQ" description="Things people ask me, answered here.">
+  <p class="lead">Things people ask me, answered here so you don't have to.</p>
+  <dl class="faq">
+    {items.map(({ id, data }) => (
+      <div id={id}>
+        <dt>{data.question}</dt>
+        <dd>
+          {data.answer.split(/\n\s*\n/).map((para) => (
+            <p>{para}</p>
+          ))}
+        </dd>
+      </div>
+    ))}
+  </dl>
+</SimplePage>
+
+<style>
+  .lead {
+    font-size: var(--text-md);
+  }
+  .faq {
+    margin-top: var(--space-12);
+    border-top: var(--rule-thick);
+  }
+  .faq div {
+    padding-block: var(--space-6);
+    border-bottom: var(--rule);
+  }
+  dt {
+    font-size: var(--text-md);
+    font-weight: 600;
+  }
+  dd {
+    margin-top: var(--space-2);
+    max-width: 62ch;
+  }
+  dd p + p {
+    margin-top: var(--space-3);
+  }
+</style>
