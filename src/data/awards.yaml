@@ -1,0 +1,28 @@
+# Awards and activities. Shown on the résumé.
+
+- id: gehu-achievers
+  title: Certificate of Outstanding Achievement for research contributions
+  detail: Graphic Era Hill University Achievers' Meet
+  year: '2023, 2024'
+  order: 1
+
+- id: autocom-young-scholar
+  title: Young Scholar Award
+  detail: International Conference on Automation and Computation (AUTOCOM) # TODO: for which paper?
+  order: 2
+
+- id: amazon-ml-school
+  title: Selected for Amazon ML Summer School
+  detail: Supervised learning, deep neural networks, reinforcement learning
+  year: '2022'
+  order: 3
+
+- id: acm-treasurer
+  title: Treasurer, ACM Student Chapter
+  detail: Graphic Era Hill University
+  order: 4
+
+- id: sarv-mahila
+  title: Volunteer, Sarv Mahila Shakti Samiti
+  detail: 50+ hours supporting skills-development initiatives for over 200 women
+  order: 5

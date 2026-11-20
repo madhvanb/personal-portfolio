@@ -1,0 +1,47 @@
+---
+/**
+ * <Footer>: copyright, source link, RSS and back-to-top.
+ */
+import { site } from '@/config/site';
+import { href } from '@/lib/url';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer" data-print="hide">
+  <div class="container row label">
+    <span>
+      © {year} {site.name}
+    </span>
+    <span class="links">
+      <a href={href('/rss.xml')}>RSS</a>
+      {site.sourceUrl && <a href={site.sourceUrl}>Source</a>}
+      <a href="#top">Top ↑</a>
+    </span>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: auto;
+    border-top: var(--rule);
+    padding-bottom: env(safe-area-inset-bottom); /* clear the iPhone home bar */
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0 var(--space-4);
+    padding-block: var(--space-3);
+  }
+  .links {
+    display: flex;
+    gap: var(--space-4);
+  }
+  .links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+  }
+</style>

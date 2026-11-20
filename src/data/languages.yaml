@@ -1,0 +1,16 @@
+# Spoken languages. Shown on the résumé.
+
+- id: hindi
+  name: Hindi
+  level: Native
+  order: 1
+
+- id: english
+  name: English
+  level: C1 (IELTS 7.5)
+  order: 2
+
+- id: german
+  name: German
+  level: A1 # TODO: update if higher
+  order: 3

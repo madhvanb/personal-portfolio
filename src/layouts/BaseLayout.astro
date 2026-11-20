@@ -1,0 +1,70 @@
+---
+/**
+ * <BaseLayout>: the shell every page uses: <head>, header, main, footer.
+ *
+ *   <BaseLayout title="Projects" description="...">
+ *     ...page content...
+ *   </BaseLayout>
+ *
+ * Fonts and global CSS are imported here once, so pages never need to.
+ */
+import '@fontsource/ibm-plex-sans/400.css';
+import '@fontsource/ibm-plex-sans/400-italic.css';
+import '@fontsource/ibm-plex-sans/600.css';
+import '@fontsource/ibm-plex-sans/700.css';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '@/styles/global.css';
+import '@/styles/print.css';
+
+import Footer from '@/components/Footer.astro';
+import Head from '@/components/Head.astro';
+import Header from '@/components/Header.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  type?: 'website' | 'article';
+  /**
+   * Full-bleed pages (the home page story) manage their own width with
+   * `.container`, so sections can run edge to edge. Other pages get a
+   * centred column automatically.
+   */
+  bleed?: boolean;
+}
+
+const { title, description, type, bleed = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" id="top">
+  <head>
+    <Head {title} {description} type={type ?? 'website'} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip label" href="#main">
+      Skip to content
+    </a>
+    <Header />
+    <main id="main" class:list={[{ container: !bleed }]}>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .skip {
+    position: absolute;
+    left: var(--space-2);
+    top: -10rem;
+    z-index: 100;
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-fg);
+    color: var(--color-bg);
+  }
+  .skip:focus {
+    top: var(--space-2);
+  }
+</style>

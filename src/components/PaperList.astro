@@ -1,0 +1,94 @@
+---
+/**
+ * <PaperList>: compact list of publications for use inside a chapter.
+ * (The résumé uses the fuller <PublicationItem>.)
+ */
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  papers: CollectionEntry<'publications'>['data'][];
+}
+
+const KIND = {
+  journal: 'Journal',
+  conference: 'Conference',
+  chapter: 'Book chapter',
+  patent: 'Patent',
+  preprint: 'Preprint',
+  workshop: 'Workshop',
+} as const;
+
+const { papers } = Astro.props;
+---
+
+{papers.length > 0 && (
+  <ul class="papers">
+    {papers.map((p) => {
+      const url = p.doi ? `https://doi.org/${p.doi}` : (p.links.paper ?? p.links.website);
+      const meta = [KIND[p.kind], p.venue, p.year].filter(Boolean).join(' · ');
+      const body = (
+        <>
+          <span class="t">{p.title}</span>
+          <span class="label m">{meta}</span>
+          {p.note && <span class="m muted">{p.note}</span>}
+        </>
+      );
+      return (
+        <li>
+          {url ? (
+            <a href={url} rel="noopener">
+              {body}
+              <span class="arrow" aria-hidden="true">
+                ↗
+              </span>
+            </a>
+          ) : (
+            <div class="static">{body}</div>
+          )}
+        </li>
+      );
+    })}
+  </ul>
+)}
+
+<style>
+  .papers {
+    list-style: none;
+    padding: 0;
+    border-top: var(--rule);
+  }
+  li {
+    border-bottom: var(--rule);
+  }
+  a,
+  .static {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-1) var(--space-4);
+    min-height: var(--tap);
+    padding: var(--space-3) 0;
+    text-decoration: none;
+  }
+  .t {
+    font-weight: 600;
+    line-height: var(--leading-snug);
+  }
+  .m {
+    grid-column: 1;
+    text-transform: none;
+    letter-spacing: 0.02em;
+  }
+  .arrow {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  a:active {
+    background: var(--color-fg);
+    color: var(--color-bg);
+  }
+  @media (hover: hover) {
+    a:hover .t {
+      text-decoration: underline;
+    }
+  }
+</style>

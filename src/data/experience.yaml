@@ -1,0 +1,58 @@
+# Work experience. One entry per role. Shown on the home page and résumé.
+# `id` must be unique. Leave out `end` for your current role.
+# Field docs: docs/content.md#experience
+
+- id: consistec
+  company: consistec Engineering & Consulting GmbH
+  role: Working Student, Machine Learning
+  location: Saarbrücken, Germany
+  url: https://www.consistec.de
+  start: 2025-09-01
+  # TODO: name the methods (e.g. isolation forest, autoencoders), the data
+  # (e.g. NetFlow/IPFIX), a result (e.g. "-X% false positives vs. rule-based
+  # alerts") and scale (e.g. "X million flows per day"). Numbers sell.
+  highlights:
+    - Develop anomaly detection models on network traffic data to flag suspicious communication patterns.
+    - Build feature-extraction and analysis pipelines for network traffic.
+    - Deliver interpretable analytics components for network monitoring and incident investigation.
+  tags: [Anomaly detection, Python]
+
+- id: drdo-irde
+  company: Instruments Research and Development Establishment (IRDE), DRDO
+  role: Machine Learning Intern
+  location: India
+  start: 2023-07-01
+  end: 2023-10-31
+  # TODO: what the graph input was (e.g. sensor tracks) and the 15% baseline.
+  highlights:
+    - Built graph neural network models for real-time drone detection and tracking, improving detection accuracy by 15%.
+    - Cut detection time by 40% through model pruning and data-pipeline optimisation, enabling real-time operation in high-traffic airspace.
+  tags: [GNNs, PyTorch]
+
+- id: insignia
+  company: Insignia Consultancy Solutions
+  role: Data Science Intern
+  location: United Kingdom (remote)
+  start: 2023-01-01
+  end: 2023-03-31
+  # TODO: how the misinformation check worked (e.g. claim-by-claim comparison
+  # against retrieved sources).
+  highlights:
+    - Built and deployed a Streamlit platform for health-topic research and article generation, using a retrieval-augmented generation (RAG) pipeline with LLaMA, web-scraped sources and an embedding index.
+    - Implemented a misinformation check on generated articles.
+    - Hosted on AWS, with EC2 for the application, S3 for data storage and Lambda for automated content-generation jobs.
+  tags: [LLMs, RAG, AWS]
+
+- id: gehu-ra
+  company: Department of Computer Science and Engineering, Graphic Era Hill University
+  role: Research Assistant
+  location: India
+  start: 2021-10-01
+  end: 2024-06-30
+  # TODO: best accuracy vs. baseline for the medical models, and the result
+  # of the coffee TDS models.
+  highlights:
+    - Built CNN and tree-based models for medical prediction (lung cancer, tuberculosis) and audio classification.
+    - Measured total dissolved solids (TDS) and related electrochemical properties of coffee extractions and built predictive models on the data.
+    - Led interdisciplinary projects applying ML to healthcare and chemical research, resulting in four publications, a published patent application and two university research awards.
+  tags: [Deep learning, Research]

@@ -1,0 +1,46 @@
+---
+/**
+ * <PageTitle>: big title at the top of index pages (/projects/, /writing/...).
+ *   <PageTitle title="Projects" count={12}>Optional intro sentence.</PageTitle>
+ */
+interface Props {
+  title: string;
+  /** Shown as a superscript count, e.g. Projects (12). */
+  count?: number;
+}
+const { title, count } = Astro.props;
+---
+
+<header class="page-title">
+  <h1>
+    {title}
+    {count !== undefined && <sup class="label">({count})</sup>}
+  </h1>
+  {Astro.slots.has('default') && (
+    <p>
+      <slot />
+    </p>
+  )}
+</header>
+
+<style>
+  .page-title {
+    padding-block: var(--space-16) var(--space-8);
+  }
+  h1 {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: var(--tracking-tight);
+    text-transform: uppercase;
+  }
+  sup {
+    vertical-align: super;
+    margin-left: var(--space-2);
+  }
+  p {
+    margin-top: var(--space-4);
+    max-width: var(--measure);
+    color: var(--color-muted);
+  }
+</style>

@@ -1,0 +1,65 @@
+---
+/**
+ * <ThemeToggle>: light/dark switch. Saves the choice in localStorage.
+ * If the visitor never picks, the site follows their OS setting, live.
+ * Also updates <meta name="theme-color"> so Safari's toolbar matches.
+ *
+ * Used by: Header.astro
+ */
+---
+
+<button class="toggle label" type="button" data-theme-toggle aria-label="Toggle dark mode">
+  <span class="light-only">Dark</span>
+  <span class="dark-only">Light</span>
+</button>
+
+<script>
+  const root = document.documentElement;
+  const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+
+  const apply = (theme: 'light' | 'dark') => {
+    root.dataset.theme = theme;
+    button?.setAttribute('aria-pressed', String(theme === 'dark'));
+    // Safari / Chrome tint the browser UI with this colour.
+    document
+      .querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')
+      .forEach((m) => (m.content = theme === 'dark' ? '#000000' : '#ffffff'));
+  };
+  apply(root.dataset.theme === 'dark' ? 'dark' : 'light');
+
+  button?.addEventListener('click', () => {
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', next);
+    apply(next);
+  });
+
+  // Follow OS changes only until the visitor makes an explicit choice.
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (!localStorage.getItem('theme')) apply(e.matches ? 'dark' : 'light');
+  });
+</script>
+
+<style>
+  .toggle {
+    min-height: var(--tap);
+    min-width: var(--tap);
+    padding: 0 var(--space-3);
+    background: none;
+    border: var(--rule);
+    cursor: pointer;
+  }
+  .toggle:active {
+    background: var(--color-fg);
+    color: var(--color-bg);
+  }
+  @media (hover: hover) {
+    .toggle:hover {
+      background: var(--color-fg);
+      color: var(--color-bg);
+    }
+  }
+  :global([data-theme='dark']) .light-only,
+  :global([data-theme='light']) .dark-only {
+    display: none;
+  }
+</style>

@@ -1,0 +1,351 @@
+---
+/**
+ * Home page: a story told in chapters, not a résumé.
+ *
+ *   Hero      one big question + who you are
+ *   Chapters  src/content/chapters/*.mdx, in order (even ones inverted)
+ *   Also built  side projects (src/content/projects/)
+ *   About     site.about + site.facts
+ *   Contact   inverted, full width
+ *
+ * The full CV lives at /resume/.
+ */
+import ChapterSection from '@/components/ChapterSection.astro';
+import EntryList from '@/components/EntryList.astro';
+import EntryRow from '@/components/EntryRow.astro';
+import { site } from '@/config/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getChapters, getProjects } from '@/lib/content';
+import { formatYear } from '@/lib/dates';
+import { href, prettyUrl } from '@/lib/url';
+
+const chapters = await getChapters();
+const projects = await getProjects();
+---
+
+<BaseLayout bleed>
+  <section class="hero container" aria-labelledby="hero-q">
+    <p class="label who">
+      <span>{site.name}</span>
+      <span class="muted">{site.role}</span>
+    </p>
+    <h1 id="hero-q">{site.hero.question}</h1>
+    <div class="hero-grid">
+      <p class="intro">{site.hero.intro}</p>
+      <nav class="toc" aria-label="Chapters">
+        <p class="label muted">Contents</p>
+        <ol>
+          {chapters.map(({ chapter }) => (
+            <li>
+              <a href={`#${chapter.id.replace(/^\d+-/, '')}`}>
+                <span class="label">{String(chapter.data.number).padStart(2, '0')}</span>
+                <span class="toc-theme">{chapter.data.theme}</span>
+                <span class="arrow" aria-hidden="true">
+                  ↓
+                </span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </div>
+  </section>
+
+  <div id="work">
+    {chapters.map(({ chapter, papers }) => (
+      <ChapterSection {chapter} {papers} />
+    ))}
+  </div>
+
+  {projects.length > 0 && (
+    <section class="container block" aria-labelledby="built-h">
+      <div class="block-head">
+        <h2 id="built-h">Also built</h2>
+        <a class="label" href={href('/projects/')}>
+          All projects →
+        </a>
+      </div>
+      <EntryList>
+        {projects.map((p, i) => (
+          <EntryRow
+            href={href(`/projects/${p.id}/`)}
+            meta={p.data.date ? formatYear(p.data.date) : String(i + 1).padStart(2, '0')}
+            title={p.data.title}
+            description={p.data.summary}
+            tags={p.data.tags}
+          />
+        ))}
+      </EntryList>
+    </section>
+  )}
+
+  <section class="container block" id="about" aria-labelledby="about-h">
+    <div class="block-head">
+      <h2 id="about-h">About</h2>
+      <a class="label" href={href('/resume/')}>
+        Full CV →
+      </a>
+    </div>
+    <div class="about">
+      <p class="about-text">{site.about}</p>
+      <dl class="facts">
+        {site.facts.map(({ label, value }) => (
+          <div>
+            <dt class="label muted">{label}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <section class="contact invert" id="contact" aria-labelledby="contact-h">
+    <div class="container">
+      <p class="label muted">Contact</p>
+      <h2 id="contact-h">Let's talk.</h2>
+      <ul class="links">
+        {site.email && (
+          <li>
+            <a href={`mailto:${site.email}`}>
+              <span class="label">Email</span>
+              <span>{site.email}</span>
+            </a>
+          </li>
+        )}
+        {site.socials.map((s) => (
+          <li>
+            <a href={s.url} rel="me noopener">
+              <span class="label">{s.label}</span>
+              <span>{prettyUrl(s.url)}</span>
+            </a>
+          </li>
+        ))}
+        <li>
+          <a href={href('/resume/')}>
+            <span class="label">CV</span>
+            <span>Read or download →</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  {/* "Now reading" marker: shows the current chapter while scrolling (tablet and up). */}
+  <p class="now label" data-now aria-hidden="true"></p>
+</BaseLayout>
+
+<script>
+  const marker = document.querySelector<HTMLElement>('[data-now]');
+  const sections = document.querySelectorAll<HTMLElement>('[data-chapter]');
+  if (marker && 'IntersectionObserver' in window) {
+    const visible = new Map<Element, boolean>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) visible.set(e.target, e.isIntersecting);
+        const current = [...sections].find((s) => visible.get(s));
+        marker.textContent = current?.dataset.chapter ?? '';
+        marker.classList.toggle('on', Boolean(current));
+      },
+      // A chapter counts as "current" while it crosses the middle of the screen.
+      { rootMargin: '-50% 0px -50% 0px' },
+    );
+    sections.forEach((s) => io.observe(s));
+  }
+</script>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    padding-block: var(--space-8) var(--space-16);
+  }
+  .who {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-4);
+  }
+  h1 {
+    margin-top: var(--space-8);
+    font-size: clamp(3rem, 14vw, 12rem);
+    font-weight: 700;
+    line-height: 0.88;
+    letter-spacing: -0.05em;
+    text-transform: uppercase;
+    hyphens: none;
+    overflow-wrap: normal;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-12);
+    margin-top: var(--space-12);
+    padding-top: var(--space-6);
+    border-top: var(--rule);
+  }
+  .intro {
+    font-size: var(--text-lg);
+    line-height: var(--leading-snug);
+    letter-spacing: -0.01em;
+    max-width: 34ch;
+  }
+  .toc ol {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-3);
+    border-top: var(--rule);
+  }
+  .toc a {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr auto;
+    align-items: center;
+    min-height: var(--tap);
+    padding-inline: var(--space-2);
+    border-bottom: var(--rule);
+    text-decoration: none;
+  }
+  .toc-theme {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .toc a:active {
+    background: var(--color-fg);
+    color: var(--color-bg);
+  }
+  @media (hover: hover) {
+    .toc a:hover {
+      background: var(--color-fg);
+      color: var(--color-bg);
+    }
+  }
+  @media (min-width: 60rem) {
+    .hero {
+      padding-top: var(--space-12);
+    }
+    h1 {
+      font-size: clamp(3rem, 12.5vw, 12rem);
+    }
+    .hero-grid {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    }
+  }
+
+  /* ---------- Also built / About ---------- */
+  .block {
+    padding-block: var(--space-16);
+    border-top: var(--rule-thick);
+  }
+  .block-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0 var(--space-4);
+    margin-bottom: var(--space-8);
+  }
+  .block-head h2 {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .block-head a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+  }
+  .about {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-8);
+  }
+  .about-text {
+    font-size: var(--text-lg);
+    line-height: var(--leading-snug);
+    max-width: 34ch;
+  }
+  .facts {
+    border-top: var(--rule);
+  }
+  .facts div {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    gap: var(--space-4);
+    padding-block: var(--space-3);
+    border-bottom: var(--rule);
+  }
+  @media (min-width: 60rem) {
+    .about {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: var(--space-12);
+    }
+  }
+
+  /* ---------- Contact ---------- */
+  .contact {
+    padding-block: var(--space-16) var(--space-24);
+  }
+  .contact h2 {
+    margin-top: var(--space-4);
+    font-size: clamp(3.25rem, 15vw, 13rem);
+    font-weight: 700;
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    text-transform: uppercase;
+  }
+  .links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    margin-top: var(--space-12);
+    list-style: none;
+    padding: 0;
+    border-top: var(--rule);
+  }
+  .links a {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-1);
+    min-height: 5rem;
+    padding: var(--space-4);
+    border-bottom: var(--rule);
+    border-right: var(--rule);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+  .links a:active {
+    background: var(--color-fg);
+    color: var(--color-bg);
+  }
+  @media (hover: hover) {
+    .links a:hover {
+      background: var(--color-fg);
+      color: var(--color-bg);
+    }
+  }
+
+  /* ---------- "Now reading" marker ---------- */
+  /* Runs vertically up the left margin so it never sits on top of text. */
+  .now {
+    position: fixed;
+    left: max(var(--space-2), env(safe-area-inset-left));
+    bottom: max(var(--space-6), env(safe-area-inset-bottom));
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    line-height: 1;
+    z-index: 5;
+    margin: 0;
+    color: #fff;
+    mix-blend-mode: difference; /* readable on both black and white sections */
+    opacity: 0;
+    pointer-events: none;
+  }
+  .now.on {
+    opacity: 1;
+  }
+  @media (max-width: 40rem) {
+    .now {
+      display: none;
+    }
+  }
+</style>

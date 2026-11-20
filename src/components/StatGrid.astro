@@ -1,0 +1,44 @@
+---
+/**
+ * <StatGrid>: big headline numbers with small labels underneath.
+ *   <StatGrid stats={[{ value: '+15%', label: 'detection accuracy' }]} />
+ * Renders nothing when the list is empty.
+ */
+interface Props {
+  stats: readonly { value: string; label: string }[];
+}
+const { stats } = Astro.props;
+---
+
+{stats.length > 0 && (
+  <dl class="stats">
+    {stats.map(({ value, label }) => (
+      <div>
+        <dt class="label muted">{label}</dt>
+        <dd>{value}</dd>
+      </div>
+    ))}
+  </dl>
+)}
+
+<style>
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr));
+    border-top: var(--rule);
+  }
+  div {
+    display: flex;
+    flex-direction: column-reverse; /* number above label, but label is read first */
+    gap: var(--space-1);
+    padding: var(--space-4) var(--space-4) var(--space-4) 0;
+    border-bottom: var(--rule);
+  }
+  dd {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: var(--tracking-tight);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

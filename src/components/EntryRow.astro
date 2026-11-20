@@ -1,0 +1,162 @@
+---
+/**
+ * <EntryRow>: one row in a list of projects or posts. The whole row is a
+ * link and inverts (black ↔ white) on hover, or while being tapped on touch
+ * screens.
+ *
+ *   <EntryRow href="/projects/foo/" meta="2026" title="Foo"
+ *             description="One line." tags={['LLMs']} />
+ *
+ * Layout by width:
+ *   phone  (< 40rem)    stacked: meta, title, description, tags
+ *   tablet (40-64rem)   meta | title + description + tags
+ *   laptop (≥ 64rem)    meta | title + description | tags
+ *
+ * Used by: home page, /projects/, /writing/. Must be inside <EntryList>.
+ */
+import TagList from './TagList.astro';
+
+interface Props {
+  href: string;
+  /** Left column: usually a year or date. */
+  meta: string;
+  title: string;
+  description?: string;
+  tags?: readonly string[];
+  /** Small note under the tags, e.g. project status. */
+  note?: string | undefined;
+}
+
+const { href, meta, title, description, tags = [], note } = Astro.props;
+---
+
+<li class="row" data-tags={tags.join('|')}>
+  <a {href}>
+    <span class="label meta">{meta}</span>
+    <span class="main">
+      <span class="title">{title}</span>
+      {description && <span class="desc">{description}</span>}
+    </span>
+    {(tags.length > 0 || note) && (
+      <span class="side">
+        <TagList {tags} />
+        {note && <span class="label note">{note}</span>}
+      </span>
+    )}
+    <span class="arrow" aria-hidden="true">
+      →
+    </span>
+  </a>
+</li>
+
+<style>
+  .row {
+    border-bottom: var(--rule);
+  }
+  .row[hidden] {
+    display: none;
+  }
+
+  /* phone: one column, arrow pinned top-right */
+  a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-2) var(--space-4);
+    padding: var(--space-6) var(--space-2);
+    text-decoration: none;
+  }
+  .meta,
+  .main,
+  .side {
+    grid-column: 1;
+  }
+  .arrow {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  /* tablet */
+  @media (min-width: 40rem) {
+    a {
+      grid-template-columns: var(--meta-col) minmax(0, 1fr) auto;
+      gap: var(--space-3) var(--space-6);
+      align-items: baseline;
+    }
+    .meta {
+      grid-row: 1 / span 2;
+    }
+    .main,
+    .side {
+      grid-column: 2;
+    }
+    .arrow {
+      grid-column: 3;
+    }
+  }
+
+  /* laptop */
+  @media (min-width: 64rem) {
+    a {
+      grid-template-columns: var(--meta-col) minmax(0, 1fr) minmax(0, 18rem) auto;
+      padding-inline: var(--space-3);
+    }
+    .meta,
+    .main,
+    .side,
+    .arrow {
+      grid-row: 1;
+    }
+    .side {
+      grid-column: 3;
+    }
+    .arrow {
+      grid-column: 4;
+    }
+  }
+
+  .title {
+    display: block;
+    font-size: var(--text-md);
+    font-weight: 600;
+    line-height: var(--leading-snug);
+  }
+  .desc {
+    display: block;
+    margin-top: var(--space-1);
+    color: var(--color-muted);
+    max-width: var(--measure);
+  }
+  .side {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    align-items: flex-start;
+  }
+
+  /* Inversion: on hover (mouse/trackpad), on keyboard focus, and while tapped. */
+  a:focus-visible,
+  a:active {
+    background: var(--color-fg);
+    color: var(--color-bg);
+  }
+  @media (hover: hover) {
+    a:hover {
+      background: var(--color-fg);
+      color: var(--color-bg);
+    }
+    a:hover .desc {
+      color: inherit;
+    }
+    a:hover :global(.tags li) {
+      border-color: var(--color-bg);
+    }
+  }
+  a:focus-visible .desc,
+  a:active .desc {
+    color: inherit;
+  }
+  a:focus-visible :global(.tags li),
+  a:active :global(.tags li) {
+    border-color: var(--color-bg);
+  }
+</style>

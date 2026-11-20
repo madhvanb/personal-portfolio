@@ -1,0 +1,33 @@
+---
+/**
+ * <TagList>: inline list of tags rendered as small boxed labels.
+ *   <TagList tags={['PyTorch', 'LLMs']} />
+ */
+interface Props {
+  tags: readonly string[];
+}
+const { tags } = Astro.props;
+---
+
+{tags.length > 0 && (
+  <ul class="tags" aria-label="Tags">
+    {tags.map((tag) => (
+      <li class="label">{tag}</li>
+    ))}
+  </ul>
+)}
+
+<style>
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    list-style: none;
+    padding: 0;
+  }
+  li {
+    border: var(--rule);
+    padding: 0 var(--space-2);
+    line-height: 1.6;
+  }
+</style>

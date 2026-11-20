@@ -1,0 +1,29 @@
+# Skills, grouped. Shown on the résumé. Only list things you'd be happy to be
+# questioned on in an interview.
+# TODO: add PyTorch Geometric / DGL, Hugging Face / LangChain, Docker, Linux
+# if you've used them.
+
+- id: programming
+  label: Programming
+  order: 1
+  items: [Python, R, SQL]
+
+- id: ml
+  label: Machine learning
+  order: 2
+  items: [PyTorch, TensorFlow / Keras, scikit-learn, OpenCV]
+
+- id: llm
+  label: LLMs and NLP
+  order: 3
+  items: [RAG pipelines, LLaMA, Text embeddings]
+
+- id: data
+  label: Data and visualisation
+  order: 4
+  items: [Pandas, NumPy, SciPy, Matplotlib, Seaborn, Plotly]
+
+- id: cloud
+  label: Cloud and tools
+  order: 5
+  items: [AWS (EC2, S3, Lambda), Azure, Git / GitHub, MySQL, Jupyter]

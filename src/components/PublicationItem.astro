@@ -1,0 +1,94 @@
+---
+/**
+ * <PublicationItem>: one paper, chapter or patent.
+ * Your name (site.name or site.authorAliases) is bolded in the author list.
+ * The left column shows the year (blank if unknown; add it in publications.yaml).
+ */
+import type { CollectionEntry } from 'astro:content';
+import { site } from '@/config/site';
+import LinkGroup from './LinkGroup.astro';
+
+interface Props {
+  paper: CollectionEntry<'publications'>['data'];
+}
+
+const KIND_LABEL = {
+  journal: 'Journal',
+  conference: 'Conference',
+  chapter: 'Book chapter',
+  patent: 'Patent',
+  preprint: 'Preprint',
+  workshop: 'Workshop',
+} as const;
+
+const { paper } = Astro.props;
+const me = new Set<string>([site.name, ...site.authorAliases]);
+const kind = KIND_LABEL[paper.kind];
+---
+
+<li class="pub">
+  <span class="label meta">{paper.year}</span>
+  <div class="main">
+    <h3>{paper.title}</h3>
+    {paper.authors.length > 0 && (
+      <p class="muted">
+        {paper.authors.map((author, i) => (
+          <>
+            {me.has(author) ? <strong>{author}</strong> : author}
+            {i < paper.authors.length - 1 && ', '}
+          </>
+        ))}
+      </p>
+    )}
+    <p class="venue">
+      <span class="label">{kind}</span>
+      <span class="muted">{paper.venue}</span>
+    </p>
+    {paper.note && <p class="muted">{paper.note}</p>}
+    {paper.doi && (
+      <p class="label doi">
+        <a href={`https://doi.org/${paper.doi}`} rel="noopener">
+          DOI {paper.doi}
+        </a>
+      </p>
+    )}
+    <LinkGroup links={paper.links} />
+  </div>
+</li>
+
+<style>
+  .pub {
+    display: grid;
+    grid-template-columns: var(--meta-col) minmax(0, 1fr);
+    gap: var(--space-1) var(--space-6);
+    align-items: baseline;
+    padding-block: var(--space-4);
+    border-bottom: var(--rule);
+  }
+  h3 {
+    font-size: var(--text-md);
+    font-weight: 600;
+  }
+  .main > * + * {
+    margin-top: var(--space-2);
+  }
+  .venue {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-3);
+    align-items: baseline;
+  }
+  .doi {
+    text-transform: none;
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+  }
+  strong {
+    color: var(--color-fg);
+  }
+  @media (max-width: 40rem) {
+    .pub {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,94 @@
+/*
+ * DESIGN TOKENS: the single source of truth for the visual system.
+ *
+ * Rules:
+ *  - Components use these variables, never raw colours or pixel values.
+ *  - The palette is strictly monochrome. Hierarchy comes from size, weight,
+ *    rules (lines) and inversion, not colour.
+ *  - Dark mode only swaps --color-* values; nothing else changes.
+ *
+ * See docs/design-system.md.
+ */
+
+:root {
+  /* ---- Colour ----
+   * Two raw inks, then semantic roles built from them. Components use the
+   * roles (--color-*). `.invert` (global.css) swaps the roles locally, which
+   * is how chapters alternate black-on-white / white-on-black. */
+  --ink: #000000;
+  --paper: #ffffff;
+  --ink-muted: #555555; /* grey text on paper; 7.4:1 (WCAG AAA) */
+  --paper-muted: #a3a3a3; /* grey text on ink; 8.3:1 (WCAG AAA) */
+
+  --color-bg: var(--paper);
+  --color-fg: var(--ink);
+  --color-muted: var(--ink-muted);
+  --color-faint: #e5e5e5; /* hairlines, table stripes */
+
+  /* ---- Type ---- */
+  --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* Fluid type scale: grows smoothly from phone to laptop, no jumps. */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  --text-lg: clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem);
+  --text-xl: clamp(2.25rem, 1.5rem + 3vw, 4.5rem);
+  /* Sized off the viewport so the longest word of your name always fits. */
+  --text-display: clamp(2.75rem, 14.5vw, 11rem);
+
+  --leading-tight: 0.9;
+  --leading-snug: 1.2;
+  --leading-body: 1.6;
+
+  --tracking-tight: -0.04em;
+  --tracking-caps: 0.08em;
+
+  /* ---- Space (4px base) ---- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+
+  /* ---- Lines ---- */
+  --rule: 1px solid var(--color-fg);
+  --rule-thick: 3px solid var(--color-fg);
+
+  /* ---- Layout ---- */
+  --page-max: 88rem;
+  --page-gutter: clamp(1rem, 4vw, 3rem);
+  /* Real side padding: never less than the iPhone notch / rounded corners
+     in landscape (safe-area insets are 0 everywhere else). */
+  --gutter-left: max(var(--page-gutter), env(safe-area-inset-left));
+  --gutter-right: max(var(--page-gutter), env(safe-area-inset-right));
+  --gutter: var(--page-gutter);
+  --measure: 68ch; /* comfortable line length for reading */
+  /* Left "date" column shared by every list, so they all line up. */
+  --meta-col: 10.5rem;
+  --header-h: 3.5rem;
+
+  /* ---- Touch ---- */
+  --tap: 44px; /* Apple's minimum comfortable tap target */
+}
+
+@media (max-width: 40rem) {
+  :root {
+    /* Header is two rows on phones (name + toggle, then nav). */
+    --header-h: 3.25rem;
+  }
+}
+
+[data-theme='dark'] {
+  --ink: #ffffff;
+  --paper: #000000;
+  --ink-muted: #a3a3a3;
+  --paper-muted: #555555;
+  --color-faint: #262626;
+}

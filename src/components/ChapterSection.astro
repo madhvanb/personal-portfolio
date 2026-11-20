@@ -1,0 +1,155 @@
+---
+/**
+ * <ChapterSection>: one chapter of the home page story.
+ *
+ * Even-numbered chapters are inverted (white on black) so the page has a
+ * strong rhythm. A coda (e.g. "Coffee") is quieter and never inverted.
+ *
+ * Layout:
+ *   phone   label row, huge theme word, headline, drawing, story, numbers
+ *   ≥ 52rem text on the left, drawing on the right
+ */
+import { href } from '@/lib/url';
+import type { Chapter } from '@/lib/content';
+import type { CollectionEntry } from 'astro:content';
+import ChapterFigure from './ChapterFigure.astro';
+import PaperList from './PaperList.astro';
+import StatGrid from './StatGrid.astro';
+import TagList from './TagList.astro';
+
+interface Props {
+  chapter: Chapter;
+  papers: CollectionEntry<'publications'>['data'][];
+}
+
+const { chapter, papers } = Astro.props;
+const { data } = chapter;
+const num = String(data.number).padStart(2, '0');
+const inverted = !data.coda && data.number % 2 === 0;
+const where = [data.org, data.period].filter(Boolean).join(' · ');
+---
+
+<section
+  class:list={['chapter', { invert: inverted, coda: data.coda }]}
+  id={chapter.id.replace(/^\d+-/, '')}
+  aria-labelledby={`${chapter.id}-h`}
+  data-chapter={`${num} — ${data.theme}`}
+>
+  <div class="container">
+    <div class="top label">
+      <span>{data.coda ? `Coda · ${num}` : `Chapter ${num}`}</span>
+      {where && <span class="muted">{where}</span>}
+    </div>
+
+    <h2 id={`${chapter.id}-h`} class="theme">
+      {data.theme}
+    </h2>
+
+    <div class="grid">
+      <div class="text">
+        <p class="title">{data.title}</p>
+        <p class="lede">{data.lede}</p>
+        {data.role && <p class="label muted">{data.role}</p>}
+        <StatGrid stats={data.stats} />
+        <PaperList {papers} />
+        <TagList tags={data.tags} />
+        {data.page && (
+          <a class="more label" href={href(`/work/${chapter.id}/`)}>
+            Read the full chapter →
+          </a>
+        )}
+      </div>
+      {data.figure && (
+        <div class="figure">
+          <ChapterFigure kind={data.figure} />
+        </div>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .chapter {
+    padding-block: var(--space-12) var(--space-16);
+    border-top: var(--rule-thick);
+  }
+  .chapter.invert {
+    border-top-color: var(--color-bg);
+  }
+  .top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-1) var(--space-4);
+  }
+  .theme {
+    margin-top: var(--space-4);
+    font-size: clamp(3.25rem, 15vw, 13rem);
+    font-weight: 700;
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    text-transform: uppercase;
+    hyphens: none;
+    overflow-wrap: normal;
+  }
+  .coda .theme {
+    font-size: clamp(2.5rem, 9vw, 7rem);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-8);
+    margin-top: var(--space-8);
+  }
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    min-width: 0;
+  }
+  .title {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    line-height: var(--leading-snug);
+    letter-spacing: -0.02em;
+    max-width: 24ch;
+    text-wrap: balance;
+  }
+  .lede {
+    font-size: var(--text-md);
+    max-width: 60ch;
+  }
+  .figure {
+    width: min(100%, 17rem);
+    order: -1; /* phones: drawing sits under the theme word, before the text */
+  }
+  .more {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+    width: fit-content;
+  }
+
+  @media (min-width: 52rem) {
+    .chapter {
+      padding-block: var(--space-16) var(--space-24);
+    }
+    .grid {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: var(--space-12);
+      margin-top: var(--space-12);
+    }
+    .figure {
+      order: 0;
+      width: 100%;
+      max-width: 26rem;
+      justify-self: end;
+      position: sticky;
+      top: calc(var(--header-h) + var(--space-8));
+      align-self: start;
+    }
+  }
+  .coda .figure {
+    max-width: 14rem;
+  }
+</style>

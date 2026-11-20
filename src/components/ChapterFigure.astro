@@ -1,0 +1,278 @@
+---
+/**
+ * <ChapterFigure>: a small monochrome line drawing for a story chapter.
+ * Every drawing makes the same point in a different domain: most of the
+ * picture is ordinary, one part is marked as the thing that doesn't belong.
+ *
+ *   <ChapterFigure kind="skies" />
+ *
+ * Drawing animation: lines "draw themselves" when the figure scrolls into
+ * view. It's opt-in: the script adds `.will-draw` only if the visitor allows
+ * motion, so without JavaScript or with reduced motion the full drawing shows.
+ *
+ * All shapes are generated from a fixed seed, so the drawing is identical on
+ * every build.
+ */
+interface Props {
+  kind: 'networks' | 'skies' | 'words' | 'health' | 'coffee';
+}
+
+const { kind } = Astro.props;
+
+/** Small deterministic PRNG (mulberry32) so drawings don't change between builds. */
+function rng(seed: number) {
+  return () => {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const r = rng(7);
+const f = (n: number) => n.toFixed(1);
+
+// networks: a noisy signal with one spike
+const signal = Array.from({ length: 41 }, (_, i) => {
+  const x = 10 + i * 4.5;
+  const spike = i === 28 ? -62 : i === 27 || i === 29 ? -18 : 0;
+  return `${f(x)},${f(120 + (r() - 0.5) * 16 + spike)}`;
+}).join(' ');
+
+// skies: nodes on a graph; one is the drone
+const nodes = Array.from({ length: 11 }, () => ({ x: 25 + r() * 150, y: 30 + r() * 130 }));
+const target = { x: 142, y: 62 };
+const edges: [number, number][] = [
+  [0, 1],
+  [1, 2],
+  [2, 3],
+  [3, 4],
+  [4, 5],
+  [5, 6],
+  [6, 7],
+  [7, 8],
+  [8, 9],
+  [9, 10],
+  [0, 5],
+  [2, 7],
+  [3, 9],
+];
+
+// words: lines of text; one is flagged
+const lines = [150, 128, 142, 96, 150, 136, 70].map((w, i) => ({ y: 38 + i * 20, w }));
+const flagged = 3;
+
+// health: a grid of cells; a cluster is detected
+const cells = Array.from({ length: 100 }, (_, i) => {
+  const cx = 28 + (i % 10) * 16;
+  const cy = 28 + Math.floor(i / 10) * 16;
+  const d = Math.hypot(cx - 124, cy - 108);
+  return { cx, cy, hit: d < 26 || (d < 34 && r() > 0.5) };
+});
+
+// coffee: measurements with a fitted line
+const points = Array.from({ length: 22 }, (_, i) => {
+  const x = 22 + i * 7.5;
+  return { x, y: 170 - (x - 20) * 0.75 + (r() - 0.5) * 34 };
+});
+---
+
+<figure class="fig" data-figure>
+  <svg viewBox="0 0 200 200" role="img" aria-label={`Line drawing: ${kind}`}>
+    <rect class="frame" x="1" y="1" width="198" height="198" pathLength="1"></rect>
+    {kind === 'networks' && (
+      <g>
+        <line class="draw faint" x1="10" y1="120" x2="190" y2="120" pathLength="1" />
+        <polyline class="draw" points={signal} pathLength="1" />
+        <rect class="draw mark" x="122" y="40" width="30" height="100" pathLength="1" />
+        <text class="note" x="122" y="32">
+          anomaly
+        </text>
+      </g>
+    )}
+    {kind === 'skies' && (
+      <g>
+        {edges.map(([a, b]) => {
+          const p = nodes[a]!;
+          const q = nodes[b]!;
+          return (
+            <line
+              class="draw faint"
+              x1={f(p.x)}
+              y1={f(p.y)}
+              x2={f(q.x)}
+              y2={f(q.y)}
+              pathLength="1"
+            />
+          );
+        })}
+        <line
+          class="draw"
+          x1={f(nodes[4]!.x)}
+          y1={f(nodes[4]!.y)}
+          x2={target.x}
+          y2={target.y}
+          pathLength="1"
+        />
+        {nodes.map((n) => (
+          <circle class="draw" cx={f(n.x)} cy={f(n.y)} r="3.5" pathLength="1" />
+        ))}
+        <circle class="solid" cx={target.x} cy={target.y} r="5" />
+        <circle class="draw mark" cx={target.x} cy={target.y} r="16" pathLength="1" />
+        <line
+          class="draw mark"
+          x1={target.x - 24}
+          y1={target.y}
+          x2={target.x + 24}
+          y2={target.y}
+          pathLength="1"
+        />
+        <line
+          class="draw mark"
+          x1={target.x}
+          y1={target.y - 24}
+          x2={target.x}
+          y2={target.y + 24}
+          pathLength="1"
+        />
+      </g>
+    )}
+    {kind === 'words' && (
+      <g>
+        {lines.map((l, i) => (
+          <line
+            class:list={['draw', { faint: i !== flagged }]}
+            x1="24"
+            y1={l.y}
+            x2={24 + l.w}
+            y2={l.y}
+            pathLength="1"
+          />
+        ))}
+        <rect
+          class="draw mark"
+          x="16"
+          y={lines[flagged]!.y - 9}
+          width={lines[flagged]!.w + 16}
+          height="18"
+          pathLength="1"
+        />
+        <text class="note" x={lines[flagged]!.w + 40} y={lines[flagged]!.y + 4}>
+          ?
+        </text>
+      </g>
+    )}
+    {kind === 'health' && (
+      <g>
+        {cells.map((c) =>
+          c.hit ? (
+            <circle class="solid" cx={c.cx} cy={c.cy} r="4" />
+          ) : (
+            <circle class="draw faint" cx={c.cx} cy={c.cy} r="2.5" pathLength="1" />
+          ),
+        )}
+        <rect class="draw mark" x="88" y="72" width="72" height="72" pathLength="1" />
+      </g>
+    )}
+    {kind === 'coffee' && (
+      <g>
+        <line class="draw faint" x1="16" y1="184" x2="190" y2="184" pathLength="1" />
+        <line class="draw faint" x1="16" y1="184" x2="16" y2="12" pathLength="1" />
+        {points.map((p) => (
+          <circle class="draw" cx={f(p.x)} cy={f(p.y)} r="3" pathLength="1" />
+        ))}
+        <line class="draw mark" x1="16" y1="173" x2="190" y2="42" pathLength="1" />
+        <text class="note" x="22" y="26">
+          TDS
+        </text>
+      </g>
+    )}
+  </svg>
+</figure>
+
+<script>
+  // Draw-on-scroll, only when the visitor hasn't asked for reduced motion.
+  const figures = document.querySelectorAll<HTMLElement>('[data-figure]');
+  const motionOK = matchMedia('(prefers-reduced-motion: no-preference)').matches;
+  if (motionOK && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          e.target.classList.add('drawn');
+          io.unobserve(e.target);
+        }
+      },
+      { threshold: 0.35 },
+    );
+    figures.forEach((fig) => {
+      fig.classList.add('will-draw');
+      io.observe(fig);
+    });
+  }
+</script>
+
+<style>
+  .fig {
+    aspect-ratio: 1;
+    width: 100%;
+  }
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  /* :where() = zero specificity, so .solid / .note below can override it. */
+  :where(svg *) {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: square;
+    vector-effect: non-scaling-stroke;
+  }
+  .frame {
+    stroke-width: 1;
+  }
+  .faint {
+    stroke: var(--color-muted);
+    stroke-width: 1;
+  }
+  .mark {
+    stroke-width: 2.5;
+  }
+  .solid {
+    fill: currentColor;
+    stroke: none;
+  }
+  .note {
+    fill: currentColor;
+    stroke: none;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Draw animation (only after the script opts in). Marks draw last. */
+  .will-draw .draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1.1s cubic-bezier(0.6, 0, 0.2, 1);
+  }
+  .will-draw .mark {
+    transition-delay: 0.7s;
+  }
+  .will-draw .solid,
+  .will-draw .note {
+    opacity: 0;
+    transition: opacity 0.2s steps(1) 1.4s;
+  }
+  .will-draw.drawn .draw {
+    stroke-dashoffset: 0;
+  }
+  .will-draw.drawn .solid,
+  .will-draw.drawn .note {
+    opacity: 1;
+  }
+</style>
