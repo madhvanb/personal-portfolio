@@ -6,25 +6,29 @@
 import EntryList from '@/components/EntryList.astro';
 import EntryRow from '@/components/EntryRow.astro';
 import ExperienceItem from '@/components/ExperienceItem.astro';
+import PublicationItem from '@/components/PublicationItem.astro';
 import Section from '@/components/Section.astro';
 import { site } from '@/config/site';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getExperience, getFeaturedProjects, getPosts, getProjects } from '@/lib/content';
+import {
+  getExperience,
+  getFeaturedProjects,
+  getPosts,
+  getProjects,
+  getPublications,
+} from '@/lib/content';
 import { formatDate, formatYear } from '@/lib/dates';
 import { href, prettyUrl } from '@/lib/url';
 
-// Featured projects; if none are marked featured, fall back to the latest three.
+// Featured projects; if none are marked featured, fall back to the first three.
 const featured = await getFeaturedProjects();
 const work = featured.length > 0 ? featured : (await getProjects()).slice(0, 3);
 const jobs = await getExperience();
+const papers = await getPublications();
 const posts = (await getPosts()).slice(0, 3);
 
-const facts = [
-  { label: 'Role', value: site.role },
-  { label: 'Focus', value: site.focus.join(', ') },
-  { label: 'Based in', value: site.location },
-  { label: 'Status', value: site.status },
-].filter((f) => f.value);
+// The name is split so each word sits on its own line in the hero.
+const nameLines = site.name.split(' ');
 
 let n = 0;
 const next = () => String(++n).padStart(2, '0');
@@ -32,11 +36,15 @@ const next = () => String(++n).padStart(2, '0');
 
 <BaseLayout>
   <section class="hero" aria-label="Introduction">
-    <h1>{site.name}</h1>
+    <h1>
+      {nameLines.map((word) => (
+        <span>{word}</span>
+      ))}
+    </h1>
     <div class="hero-grid">
       <p class="intro">{site.intro}</p>
       <dl class="facts">
-        {facts.map(({ label, value }) => (
+        {site.facts.map(({ label, value }) => (
           <div>
             <dt class="label muted">{label}</dt>
             <dd>{value}</dd>
@@ -55,7 +63,9 @@ const next = () => String(++n).padStart(2, '0');
         {work.map((p) => (
           <EntryRow
             href={href(`/projects/${p.id}/`)}
-            meta={formatYear(p.data.date)}
+            meta={
+              p.data.date ? formatYear(p.data.date) : String(work.indexOf(p) + 1).padStart(2, '0')
+            }
             title={p.data.title}
             description={p.data.summary}
             tags={p.data.tags}
@@ -73,6 +83,16 @@ const next = () => String(++n).padStart(2, '0');
       <ul class="plain">
         {jobs.map((j) => (
           <ExperienceItem job={j.data} />
+        ))}
+      </ul>
+    </Section>
+  )}
+
+  {papers.length > 0 && (
+    <Section index={next()} title="Publications" id="publications">
+      <ul class="plain">
+        {papers.map((p) => (
+          <PublicationItem paper={p.data} />
         ))}
       </ul>
     </Section>
@@ -97,14 +117,23 @@ const next = () => String(++n).padStart(2, '0');
   )}
 
   <Section index={next()} title="Contact" id="contact">
-    <a class="email" href={`mailto:${site.email}`}>
-      {site.email}
-    </a>
+    {site.email ? (
+      <a class="big-link" href={`mailto:${site.email}`}>
+        {site.email}
+      </a>
+    ) : (
+      site.socials[0] && (
+        <a class="big-link" href={site.socials[0].url} rel="me noopener">
+          {site.socials[0].label} →
+        </a>
+      )
+    )}
     <ul class="socials label">
       {site.socials.map((s) => (
         <li>
           <a href={s.url} rel="me noopener">
-            {s.label} <span class="muted">{prettyUrl(s.url)}</span>
+            <span>{s.label}</span>
+            <span class="muted">{prettyUrl(s.url)}</span>
           </a>
         </li>
       ))}
@@ -114,7 +143,7 @@ const next = () => String(++n).padStart(2, '0');
 
 <style>
   .hero {
-    padding-block: var(--space-16) var(--space-8);
+    padding-block: var(--space-12) var(--space-4);
   }
   h1 {
     font-size: var(--text-display);
@@ -122,14 +151,16 @@ const next = () => String(++n).padStart(2, '0');
     line-height: var(--leading-tight);
     letter-spacing: var(--tracking-tight);
     text-transform: uppercase;
-    /* Very long names shrink instead of overflowing. */
-    overflow-wrap: anywhere;
+    hyphens: none;
+  }
+  h1 span {
+    display: block;
   }
   .hero-grid {
     display: grid;
-    grid-template-columns: 3fr 2fr;
-    gap: var(--space-12);
-    margin-top: var(--space-12);
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-8);
+    margin-top: var(--space-8);
     padding-top: var(--space-6);
     border-top: var(--rule);
   }
@@ -137,11 +168,11 @@ const next = () => String(++n).padStart(2, '0');
     font-size: var(--text-lg);
     line-height: var(--leading-snug);
     letter-spacing: -0.01em;
-    max-width: 30ch;
+    max-width: 32ch;
   }
   .facts div {
     display: grid;
-    grid-template-columns: 7rem 1fr;
+    grid-template-columns: 6rem minmax(0, 1fr);
     gap: var(--space-4);
     padding-block: var(--space-2);
     border-bottom: var(--rule);
@@ -149,13 +180,28 @@ const next = () => String(++n).padStart(2, '0');
   .facts div:first-child {
     border-top: var(--rule);
   }
+  /* iPad landscape and laptops: intro and facts side by side. */
+  @media (min-width: 60rem) {
+    .hero {
+      padding-top: var(--space-16);
+    }
+    .hero-grid {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: var(--space-12);
+      margin-top: var(--space-12);
+    }
+  }
+
   .plain {
     list-style: none;
     padding: 0;
     border-top: var(--rule);
   }
-  .email {
-    display: inline-block;
+
+  .big-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
     font-size: var(--text-xl);
     font-weight: 700;
     letter-spacing: var(--tracking-tight);
@@ -163,14 +209,21 @@ const next = () => String(++n).padStart(2, '0');
     overflow-wrap: anywhere;
     text-decoration-thickness: 3px;
   }
-  .email:hover {
+  .big-link:active {
     background: var(--color-fg);
     color: var(--color-bg);
-    text-decoration: none;
+  }
+  @media (hover: hover) {
+    .big-link:hover {
+      background: var(--color-fg);
+      color: var(--color-bg);
+      text-decoration: none;
+    }
   }
   .socials {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    column-gap: var(--space-6);
     margin-top: var(--space-12);
     list-style: none;
     padding: 0;
@@ -179,22 +232,21 @@ const next = () => String(++n).padStart(2, '0');
   .socials a {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: var(--space-1);
+    min-height: var(--tap);
     padding: var(--space-4) 0;
     border-bottom: var(--rule);
     text-decoration: none;
   }
-  .socials a:hover {
-    text-decoration: underline;
-  }
   .socials .muted {
     text-transform: none;
     letter-spacing: 0;
+    overflow-wrap: anywhere;
   }
-  @media (max-width: 52rem) {
-    .hero-grid {
-      grid-template-columns: 1fr;
-      gap: var(--space-8);
+  @media (hover: hover) {
+    .socials a:hover span:first-child {
+      text-decoration: underline;
     }
   }
 </style>

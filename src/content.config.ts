@@ -10,8 +10,11 @@
  *   writing      src/content/writing/*.mdx     one file per post
  *   experience   src/data/experience.yaml      list of jobs
  *   education    src/data/education.yaml       list of degrees
- *   publications src/data/publications.yaml   list of papers (can be empty)
+ *   publications src/data/publications.yaml   papers, chapters, patents (can be empty)
  *   skills       src/data/skills.yaml         grouped skills
+ *   languages    src/data/languages.yaml      spoken languages
+ *   awards       src/data/awards.yaml         awards and activities
+ *   certifications src/data/certifications.yaml
  *
  * Field-by-field docs: docs/content.md
  */
@@ -37,11 +40,13 @@ const projects = defineCollection({
     title: z.string(),
     /** One sentence. Shown in lists and link previews. */
     summary: z.string().max(200),
-    /** When it was finished or last meaningfully updated. Used for sorting. */
-    date: z.coerce.date(),
+    /** When it was finished or last meaningfully updated. Shown as the year. Optional. */
+    date: z.coerce.date().optional(),
+    /** Manual sort position: lower comes first. Ties are broken by date, newest first. */
+    order: z.number().default(100),
     /** What you did on it, e.g. "Solo", "Lead, team of 3". */
     role: z.string().optional(),
-    status: z.enum(['shipped', 'research', 'in-progress', 'archived']).default('shipped'),
+    status: z.enum(['shipped', 'research', 'in-progress', 'archived']).optional(),
     tags: z.array(z.string()).default([]),
     /** Featured projects appear on the home page. */
     featured: z.boolean().default(false),
@@ -98,11 +103,19 @@ const publications = defineCollection({
   loader: file('src/data/publications.yaml'),
   schema: z.object({
     title: z.string(),
-    /** Your own name is bolded automatically if it matches `site.name` in src/config/site.ts. */
-    authors: z.array(z.string()),
+    kind: z.enum(['journal', 'conference', 'chapter', 'patent', 'preprint', 'workshop']),
+    /** Your own name is bolded if it matches `site.name` or `site.authorAliases`. */
+    authors: z.array(z.string()).default([]),
+    /** Journal, conference, book or patent office. */
     venue: z.string(),
-    year: z.number().int(),
+    year: z.number().int().optional(),
+    /** e.g. "10.1109/ICAIA57370.2023.10169724". Rendered as a link to doi.org. */
+    doi: z.string().optional(),
+    /** Extra line, e.g. a patent application number. */
+    note: z.string().optional(),
     links,
+    /** Tie-breaker within a year; lower comes first. */
+    order: z.number().default(0),
   }),
 });
 
@@ -117,4 +130,45 @@ const skills = defineCollection({
   }),
 });
 
-export const collections = { projects, writing, experience, education, publications, skills };
+const languages = defineCollection({
+  loader: file('src/data/languages.yaml'),
+  schema: z.object({
+    name: z.string(),
+    /** e.g. "Native", "C1", "A1". */
+    level: z.string(),
+    order: z.number().default(0),
+  }),
+});
+
+const awards = defineCollection({
+  loader: file('src/data/awards.yaml'),
+  schema: z.object({
+    title: z.string(),
+    detail: z.string().optional(),
+    /** Free text so "2023, 2024" works. */
+    year: z.string().optional(),
+    order: z.number().default(0),
+  }),
+});
+
+const certifications = defineCollection({
+  loader: file('src/data/certifications.yaml'),
+  schema: z.object({
+    name: z.string(),
+    issuer: z.string().optional(),
+    url: z.url().optional(),
+    order: z.number().default(0),
+  }),
+});
+
+export const collections = {
+  projects,
+  writing,
+  experience,
+  education,
+  publications,
+  skills,
+  languages,
+  awards,
+  certifications,
+};

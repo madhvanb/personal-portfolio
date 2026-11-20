@@ -18,7 +18,8 @@ import BaseLayout from './BaseLayout.astro';
 interface Props {
   title: string;
   description: string;
-  date: Date;
+  /** Optional: undated projects simply don't show a date line. */
+  date?: Date | undefined;
   updated?: Date | undefined;
   tags?: readonly string[];
   /** Where the "← back" link goes, e.g. { label: 'All projects', path: '/projects/' }. */
@@ -39,15 +40,17 @@ const { title, description, date, updated, tags = [], back, kicker } = Astro.pro
       {kicker && <p class="label">{kicker}</p>}
       <h1>{title}</h1>
       <p class="lede">{description}</p>
-      <p class="label muted">
-        <FormattedDate {date} />
-        {updated && (
-          <>
-            {' · Updated '}
-            <FormattedDate date={updated} />
-          </>
-        )}
-      </p>
+      {date && (
+        <p class="label muted">
+          <FormattedDate {date} />
+          {updated && (
+            <>
+              {' · Updated '}
+              <FormattedDate date={updated} />
+            </>
+          )}
+        </p>
+      )}
       <TagList {tags} />
       <slot name="meta" />
     </header>
@@ -59,7 +62,7 @@ const { title, description, date, updated, tags = [], back, kicker } = Astro.pro
 
 <style>
   article {
-    padding-block: var(--space-12) var(--space-24);
+    padding-block: var(--space-6) var(--space-24);
   }
   .intro {
     display: grid;
@@ -69,11 +72,16 @@ const { title, description, date, updated, tags = [], back, kicker } = Astro.pro
     border-bottom: var(--rule-thick);
   }
   .back {
-    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
     width: fit-content;
+    text-decoration: none;
   }
-  .back:hover {
-    text-decoration: underline;
+  @media (hover: hover) {
+    .back:hover {
+      text-decoration: underline;
+    }
   }
   h1 {
     font-size: var(--text-xl);

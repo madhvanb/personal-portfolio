@@ -21,14 +21,15 @@
   --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
-  /* Fluid type scale: min at 360px viewport, max at 1440px. */
+  /* Fluid type scale: grows smoothly from phone to laptop, no jumps. */
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
   --text-md: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
   --text-lg: clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem);
   --text-xl: clamp(2.25rem, 1.5rem + 3vw, 4.5rem);
-  --text-display: clamp(3.5rem, 1rem + 11vw, 11rem);
+  /* Sized off the viewport so the longest word of your name always fits. */
+  --text-display: clamp(2.75rem, 14.5vw, 11rem);
 
   --leading-tight: 0.9;
   --leading-snug: 1.2;
@@ -55,7 +56,25 @@
   /* ---- Layout ---- */
   --page-max: 88rem;
   --page-gutter: clamp(1rem, 4vw, 3rem);
+  /* Real side padding: never less than the iPhone notch / rounded corners
+     in landscape (safe-area insets are 0 everywhere else). */
+  --gutter-left: max(var(--page-gutter), env(safe-area-inset-left));
+  --gutter-right: max(var(--page-gutter), env(safe-area-inset-right));
+  --gutter: var(--page-gutter);
   --measure: 68ch; /* comfortable line length for reading */
+  /* Left "date" column shared by every list, so they all line up. */
+  --meta-col: 10.5rem;
+  --header-h: 3.5rem;
+
+  /* ---- Touch ---- */
+  --tap: 44px; /* Apple's minimum comfortable tap target */
+}
+
+@media (max-width: 40rem) {
+  :root {
+    /* Header is two rows on phones (name + toggle, then nav). */
+    --header-h: 3.25rem;
+  }
 }
 
 [data-theme='dark'] {

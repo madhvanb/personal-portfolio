@@ -8,14 +8,33 @@
     --color-bg: #fff;
     --color-fg: #000;
     --color-muted: #333;
+    /* Paper-sized type and spacing. */
     --text-display: 2.25rem;
-    --text-xl: 1.75rem;
+    --text-xl: 20pt;
+    --text-lg: 12pt;
+    --text-md: 10.5pt;
+    --text-base: 9.5pt;
+    --text-sm: 9pt;
+    --text-xs: 7.5pt;
+    --space-16: 0.75rem;
+    --space-12: 0.6rem;
+    --space-8: 0.5rem;
+    --space-6: 0.4rem;
+    --space-4: 0.3rem;
+    --space-3: 0.25rem;
+    --meta-col: 8.5rem;
+    --rule-thick: 2px solid #000;
+    --leading-body: 1.4;
   }
   @page {
     margin: 14mm;
   }
   body {
-    font-size: 10pt;
+    font-size: var(--text-base);
+  }
+  /* Links print as plain text; no 44px tap padding on paper. */
+  a {
+    min-height: 0 !important;
   }
   [data-print='hide'] {
     display: none !important;

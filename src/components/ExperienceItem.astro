@@ -1,7 +1,7 @@
 ---
 /**
  * <ExperienceItem>: one job. Two variants:
- *   compact  dates | role, company | location     (home page)
+ *   compact  dates | role, company, location     (home page)
  *   full     the above plus summary and bullet highlights (résumé)
  *
  *   <ExperienceItem job={entry.data} variant="full" />
@@ -20,9 +20,11 @@ const { job, variant = 'compact' } = Astro.props;
 <li class:list={['job', variant]}>
   <span class="label dates">{formatRange(job.start, job.end)}</span>
   <div class="main">
-    <h3>
-      {job.role}, {job.url ? <a href={job.url}>{job.company}</a> : job.company}
-    </h3>
+    <h3>{job.role}</h3>
+    <p class="org">
+      {job.url ? <a href={job.url}>{job.company}</a> : job.company}
+      {job.location && <span class="muted"> · {job.location}</span>}
+    </p>
     {variant === 'full' && (
       <>
         {job.summary && <p class="muted">{job.summary}</p>}
@@ -36,39 +38,38 @@ const { job, variant = 'compact' } = Astro.props;
       </>
     )}
   </div>
-  {job.location && <span class="label loc muted">{job.location}</span>}
 </li>
 
 <style>
   .job {
     display: grid;
-    grid-template-columns: 12rem 1fr auto;
-    gap: var(--space-6);
+    grid-template-columns: var(--meta-col) minmax(0, 1fr);
+    gap: var(--space-1) var(--space-6);
     align-items: baseline;
     padding-block: var(--space-4);
     border-bottom: var(--rule);
   }
   h3 {
-    font-size: var(--text-base);
+    font-size: var(--text-md);
     font-weight: 600;
   }
-  .full h3 {
-    font-size: var(--text-md);
-  }
   .main > * + * {
-    margin-top: var(--space-2);
+    margin-top: var(--space-1);
+  }
+  .full .highlights {
+    margin-top: var(--space-3);
   }
   .highlights {
     padding-left: 1.1em;
     list-style: square;
+    max-width: var(--measure);
   }
   .highlights li + li {
-    margin-top: var(--space-1);
+    margin-top: var(--space-2);
   }
   @media (max-width: 40rem) {
     .job {
-      grid-template-columns: 1fr;
-      gap: var(--space-1);
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 </style>

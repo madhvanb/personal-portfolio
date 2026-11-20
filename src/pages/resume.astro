@@ -1,10 +1,11 @@
 ---
 /**
  * /resume/: résumé built entirely from your content files, so it never
- * drifts out of sync with the rest of the site.
+ * drifts out of sync with the rest of the site. Section order follows the
+ * PDF résumé: education first while you're a student.
  *
  * "Download PDF" opens the browser's print dialog; src/styles/print.css
- * strips the site chrome so "Save as PDF" gives a clean one-to-two page CV.
+ * strips the site chrome so "Save as PDF" gives a clean CV.
  */
 import ExperienceItem from '@/components/ExperienceItem.astro';
 import PublicationItem from '@/components/PublicationItem.astro';
@@ -12,25 +13,31 @@ import Section from '@/components/Section.astro';
 import { site } from '@/config/site';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import {
+  getAwards,
+  getCertifications,
   getEducation,
   getExperience,
   getFeaturedProjects,
+  getLanguages,
   getPublications,
   getSkills,
 } from '@/lib/content';
 import { formatRange } from '@/lib/dates';
 import { href, prettyUrl } from '@/lib/url';
 
-const [jobs, education, papers, skills, projects] = await Promise.all([
+const [jobs, education, papers, skills, projects, languages, awards, certs] = await Promise.all([
   getExperience(),
   getEducation(),
   getPublications(),
   getSkills(),
   getFeaturedProjects(),
+  getLanguages(),
+  getAwards(),
+  getCertifications(),
 ]);
 
 const contact = [
-  { label: site.email, url: `mailto:${site.email}` },
+  ...(site.email ? [{ label: site.email, url: `mailto:${site.email}` }] : []),
   ...site.socials.map((s) => ({ label: prettyUrl(s.url), url: s.url })),
 ];
 
@@ -38,13 +45,12 @@ let n = 0;
 const next = () => String(++n).padStart(2, '0');
 ---
 
-<BaseLayout title="Résumé" description={`Résumé of ${site.name}, ${site.role}.`}>
+<BaseLayout title="Résumé" description={`Résumé of ${site.name}. ${site.role}.`}>
   <header class="top">
     <div>
       <h1>{site.name}</h1>
-      <p class="role">
-        {site.role} · {site.location}
-      </p>
+      <p class="role">{site.role}</p>
+      <p class="label muted">{site.location}</p>
     </div>
     <button class="print label" type="button" data-print="hide" data-print-button>
       Download PDF
@@ -59,6 +65,30 @@ const next = () => String(++n).padStart(2, '0');
     ))}
   </ul>
 
+  <p class="summary">{site.summary}</p>
+
+  {education.length > 0 && (
+    <Section index={next()} title="Education">
+      <ul class="plain">
+        {education.map(({ data }) => (
+          <li class="item">
+            <span class="label">{formatRange(data.start, data.end)}</span>
+            <div>
+              <h3>{data.degree}</h3>
+              <p>
+                {data.institution}
+                {data.location && <span class="muted"> · {data.location}</span>}
+              </p>
+              {data.notes.map((note) => (
+                <p class="muted">{note}</p>
+              ))}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </Section>
+  )}
+
   {jobs.length > 0 && (
     <Section index={next()} title="Experience">
       <ul class="plain">
@@ -69,12 +99,22 @@ const next = () => String(++n).padStart(2, '0');
     </Section>
   )}
 
+  {papers.length > 0 && (
+    <Section index={next()} title="Publications and patent">
+      <ul class="plain">
+        {papers.map((p) => (
+          <PublicationItem paper={p.data} />
+        ))}
+      </ul>
+    </Section>
+  )}
+
   {projects.length > 0 && (
-    <Section index={next()} title="Selected projects">
+    <Section index={next()} title="Projects">
       <ul class="plain">
         {projects.map((p) => (
-          <li class="item">
-            <span class="label">{p.data.date.getUTCFullYear()}</span>
+          <li class="item linked">
+            <span class="label">{p.data.date?.getUTCFullYear() ?? p.data.tags[0] ?? ''}</span>
             <div>
               <h3>
                 <a href={href(`/projects/${p.id}/`)}>{p.data.title}</a>
@@ -87,29 +127,41 @@ const next = () => String(++n).padStart(2, '0');
     </Section>
   )}
 
-  {papers.length > 0 && (
-    <Section index={next()} title="Publications">
-      <ul class="plain">
-        {papers.map((p) => (
-          <PublicationItem paper={p.data} />
+  {skills.length > 0 && (
+    <Section index={next()} title="Skills">
+      <dl class="pairs">
+        {skills.map(({ data }) => (
+          <div>
+            <dt class="label">{data.label}</dt>
+            <dd>{data.items.join(', ')}</dd>
+          </div>
         ))}
-      </ul>
+      </dl>
     </Section>
   )}
 
-  {education.length > 0 && (
-    <Section index={next()} title="Education">
+  {languages.length > 0 && (
+    <Section index={next()} title="Languages">
+      <dl class="pairs">
+        {languages.map(({ data }) => (
+          <div>
+            <dt class="label">{data.name}</dt>
+            <dd>{data.level}</dd>
+          </div>
+        ))}
+      </dl>
+    </Section>
+  )}
+
+  {awards.length > 0 && (
+    <Section index={next()} title="Awards and activities">
       <ul class="plain">
-        {education.map(({ data }) => (
+        {awards.map(({ data }) => (
           <li class="item">
-            <span class="label">{formatRange(data.start, data.end)}</span>
+            <span class="label">{data.year ?? ''}</span>
             <div>
-              <h3>
-                {data.degree}, {data.institution}
-              </h3>
-              {data.notes.map((note) => (
-                <p class="muted">{note}</p>
-              ))}
+              <h3>{data.title}</h3>
+              {data.detail && <p class="muted">{data.detail}</p>}
             </div>
           </li>
         ))}
@@ -117,13 +169,13 @@ const next = () => String(++n).padStart(2, '0');
     </Section>
   )}
 
-  {skills.length > 0 && (
-    <Section index={next()} title="Skills">
-      <dl class="skills">
-        {skills.map(({ data }) => (
+  {certs.length > 0 && (
+    <Section index={next()} title="Certifications">
+      <dl class="pairs">
+        {certs.map(({ data }) => (
           <div>
-            <dt class="label">{data.label}</dt>
-            <dd>{data.items.join(', ')}</dd>
+            <dt class="label">{data.issuer ?? ''}</dt>
+            <dd>{data.url ? <a href={data.url}>{data.name}</a> : data.name}</dd>
           </div>
         ))}
       </dl>
@@ -138,10 +190,11 @@ const next = () => String(++n).padStart(2, '0');
 <style>
   .top {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: flex-end;
     gap: var(--space-6);
-    padding-top: var(--space-16);
+    padding-top: var(--space-12);
   }
   h1 {
     font-size: var(--text-xl);
@@ -154,42 +207,65 @@ const next = () => String(++n).padStart(2, '0');
     margin-top: var(--space-3);
     font-size: var(--text-md);
   }
+  .top .label {
+    margin-top: var(--space-1);
+  }
   .print {
     flex-shrink: 0;
+    min-height: var(--tap);
+    padding: 0 var(--space-4);
     background: var(--color-fg);
     color: var(--color-bg);
     border: var(--rule);
-    padding: var(--space-2) var(--space-4);
     cursor: pointer;
   }
-  .print:hover {
+  .print:active {
     background: var(--color-bg);
     color: var(--color-fg);
+  }
+  @media (hover: hover) {
+    .print:hover {
+      background: var(--color-bg);
+      color: var(--color-fg);
+    }
   }
   .contact {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2) var(--space-6);
+    gap: 0 var(--space-6);
     margin-top: var(--space-6);
-    padding-block: var(--space-3);
+    padding: 0;
     border-block: var(--rule);
     list-style: none;
-    padding-inline: 0;
     text-transform: none;
     letter-spacing: 0;
+  }
+  .contact a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+  }
+  .summary {
+    margin-top: var(--space-8);
+    font-size: var(--text-md);
+    max-width: var(--measure);
   }
   .plain {
     list-style: none;
     padding: 0;
     border-top: var(--rule);
   }
-  .item {
+  .item,
+  .pairs div {
     display: grid;
-    grid-template-columns: 12rem 1fr;
-    gap: var(--space-6);
+    grid-template-columns: var(--meta-col) minmax(0, 1fr);
+    gap: var(--space-1) var(--space-6);
     align-items: baseline;
     padding-block: var(--space-4);
     border-bottom: var(--rule);
+  }
+  .pairs div {
+    padding-block: var(--space-3);
   }
   .item h3 {
     font-size: var(--text-md);
@@ -198,25 +274,34 @@ const next = () => String(++n).padStart(2, '0');
   .item p {
     margin-top: var(--space-1);
   }
-  .skills {
+  /* Whole project row is tappable: the title link's hit area covers the row. */
+  .linked {
+    position: relative;
+  }
+  .linked h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .linked:active {
+    background: var(--color-fg);
+    color: var(--color-bg);
+  }
+  .linked:active .muted {
+    color: inherit;
+  }
+  @media (hover: hover) {
+    .linked:hover h3 a {
+      text-decoration-thickness: 2px;
+    }
+  }
+  .pairs {
     border-top: var(--rule);
   }
-  .skills div {
-    display: grid;
-    grid-template-columns: 12rem 1fr;
-    gap: var(--space-6);
-    padding-block: var(--space-3);
-    border-bottom: var(--rule);
-  }
   @media (max-width: 40rem) {
-    .top {
-      flex-direction: column;
-      align-items: flex-start;
-    }
     .item,
-    .skills div {
-      grid-template-columns: 1fr;
-      gap: var(--space-1);
+    .pairs div {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
   /* Tighter spacing on paper. */
@@ -224,9 +309,18 @@ const next = () => String(++n).padStart(2, '0');
     .top {
       padding-top: 0;
     }
+    .summary {
+      margin-top: 0.75rem;
+      font-size: 10pt;
+    }
     .item,
-    .skills div {
-      padding-block: 0.4rem;
+    .pairs div {
+      grid-template-columns: var(--meta-col) minmax(0, 1fr);
+      padding-block: 0.3rem;
+    }
+    .contact a {
+      min-height: 0;
+      padding-block: 0.3rem;
     }
   }
 </style>

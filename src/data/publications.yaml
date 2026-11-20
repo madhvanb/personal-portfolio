@@ -1,11 +1,41 @@
-# Papers, preprints, workshop talks. Remove the example and leave `[]` if you
-# have none yet. The section is hidden automatically when this list is empty.
+# Papers, book chapters and patents. Hidden automatically if this list is empty.
+# kind: journal | conference | chapter | patent | preprint | workshop
 # Field docs: docs/content.md#publications
+#
+# TODO: add `authors:` lists (your name gets bolded) and the missing years.
 
-- id: example-paper
-  title: 'EXAMPLE: An Example Paper Title About Efficient Fine-Tuning'
-  authors: [A. Coauthor, Madhvan, B. Coauthor]
-  venue: Example Workshop @ NeurIPS
-  year: 2025
-  links:
-    paper: https://arxiv.org/
+- id: lung-cancer-jios
+  title: 'Enhancing Patient Outcomes Through Machine Learning: A Study of Lung Cancer Prediction'
+  kind: journal
+  venue: Journal of Information and Optimization Sciences
+  doi: 10.47974/JIOS-1438
+  order: 1
+
+- id: audio-mfcc-jios
+  title: A Comprehensive Study Based on MFCC and Spectrogram for Audio Classification
+  kind: journal
+  venue: Journal of Information and Optimization Sciences
+  doi: 10.47974/JIOS-1431
+  order: 2
+
+- id: tuberculosis-icaia
+  title: A Study on Tuberculosis with Deep Learning and Machine Learning Approaches
+  kind: conference
+  venue: IEEE ICAIA
+  year: 2023
+  doi: 10.1109/ICAIA57370.2023.10169724
+  order: 1
+
+- id: neuromorphic-chapter
+  title: 'Neuromorphic Computing: Forging a Link between Artificial Intelligence and Neurological Models'
+  kind: chapter
+  venue: "Practitioner's Approach for Problem-Solving using AI, Bentham Science"
+  order: 3
+
+- id: espresso-patent
+  title: Manual Espresso Brewer
+  kind: patent
+  venue: Indian Patent Application
+  year: 2023
+  note: Application No. 202311004209 A, published 27 January 2023
+  order: 2

@@ -16,7 +16,10 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  scroll-padding-top: var(--space-24);
+  /* Anchor jumps land below the sticky header. */
+  scroll-padding-top: calc(var(--header-h) * 2 + env(safe-area-inset-top));
+  /* No grey flash on tap in iOS Safari; :active styles give feedback instead. */
+  -webkit-tap-highlight-color: transparent;
 }
 @media (prefers-reduced-motion: no-preference) {
   html {
@@ -54,6 +57,9 @@ h3,
 h4 {
   line-height: var(--leading-snug);
   text-wrap: balance;
+  /* Long words (e.g. "Reinforcement-Learning") wrap instead of overflowing on phones. */
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 p {
   text-wrap: pretty;
@@ -70,8 +76,10 @@ a {
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
 }
-a:hover {
-  text-decoration-thickness: 2px;
+@media (hover: hover) {
+  a:hover {
+    text-decoration-thickness: 2px;
+  }
 }
 
 /* One focus style everywhere: thick outline, never removed. */
@@ -82,12 +90,13 @@ a:hover {
 
 /* ---- Utilities ---- */
 
-/* Centered page column with side gutters. */
+/* Centered page column with side gutters (notch-aware). */
 .container {
   width: 100%;
-  max-width: var(--page-max);
+  max-width: calc(var(--page-max) + var(--gutter-left) + var(--gutter-right));
   margin-inline: auto;
-  padding-inline: var(--page-gutter);
+  padding-left: var(--gutter-left);
+  padding-right: var(--gutter-right);
 }
 
 /* Small uppercase mono label: section numbers, metadata, tags. */

@@ -4,24 +4,18 @@
  * shift "2026-01-01" to Dec 31.
  */
 
-const monthYear = new Intl.DateTimeFormat('en-GB', {
-  month: 'short',
-  year: 'numeric',
-  timeZone: 'UTC',
-});
+// Three-letter English month names. Hand-written so every month is exactly
+// three letters (Intl's en-GB gives "Sept"; en-US puts the month first).
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-const fullDate = new Intl.DateTimeFormat('en-GB', {
-  day: '2-digit',
-  month: 'short',
-  year: 'numeric',
-  timeZone: 'UTC',
-});
+const month = (d: Date): string => MONTHS[d.getUTCMonth()] ?? '';
 
 /** "Mar 2026" */
-export const formatMonthYear = (d: Date): string => monthYear.format(d);
+export const formatMonthYear = (d: Date): string => `${month(d)} ${d.getUTCFullYear()}`;
 
 /** "04 Mar 2026" */
-export const formatDate = (d: Date): string => fullDate.format(d);
+export const formatDate = (d: Date): string =>
+  `${String(d.getUTCDate()).padStart(2, '0')} ${month(d)} ${d.getUTCFullYear()}`;
 
 /** "2026" */
 export const formatYear = (d: Date): string => String(d.getUTCFullYear());

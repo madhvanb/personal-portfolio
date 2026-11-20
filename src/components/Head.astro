@@ -22,7 +22,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- viewport-fit=cover lets the layout use the full screen on notched iPhones;
+     safe-area padding in global.css keeps content clear of the notch. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<!-- Stop iOS turning long numbers (DOIs, patent numbers) into phone links. -->
+<meta name="format-detection" content="telephone=no" />
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
@@ -35,6 +39,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 <meta name="twitter:card" content="summary" />
 
 <link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
+<link rel="apple-touch-icon" href={href('/apple-touch-icon.png')} />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
 <link rel="sitemap" href={href('/sitemap-index.xml')} />
 <link
   rel="alternate"

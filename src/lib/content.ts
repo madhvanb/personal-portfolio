@@ -13,11 +13,18 @@ export type Post = CollectionEntry<'writing'>;
 const isVisible = ({ data }: { data: { draft: boolean } }): boolean =>
   import.meta.env.DEV || !data.draft;
 
-const newestFirst = <T extends { data: { date: Date } }>(a: T, b: T): number =>
-  b.data.date.valueOf() - a.data.date.valueOf();
+const newestFirst = (a: Post, b: Post): number => b.data.date.valueOf() - a.data.date.valueOf();
+
+const byOrder = <T extends { data: { order: number } }>(a: T, b: T): number =>
+  a.data.order - b.data.order;
+
+/** By `order` (lower first), then date (newest first, undated last). */
+const byOrderThenDate = (a: Project, b: Project): number =>
+  a.data.order - b.data.order ||
+  (b.data.date?.valueOf() ?? -Infinity) - (a.data.date?.valueOf() ?? -Infinity);
 
 export async function getProjects(): Promise<Project[]> {
-  return (await getCollection('projects', isVisible)).sort(newestFirst);
+  return (await getCollection('projects', isVisible)).sort(byOrderThenDate);
 }
 
 export async function getFeaturedProjects(): Promise<Project[]> {
@@ -44,12 +51,27 @@ export async function getEducation(): Promise<CollectionEntry<'education'>[]> {
   );
 }
 
+/** Newest year first; undated entries last; `order` breaks ties. */
 export async function getPublications(): Promise<CollectionEntry<'publications'>[]> {
-  return (await getCollection('publications')).sort((a, b) => b.data.year - a.data.year);
+  return (await getCollection('publications')).sort(
+    (a, b) => (b.data.year ?? -Infinity) - (a.data.year ?? -Infinity) || byOrder(a, b),
+  );
 }
 
 export async function getSkills(): Promise<CollectionEntry<'skills'>[]> {
-  return (await getCollection('skills')).sort((a, b) => a.data.order - b.data.order);
+  return (await getCollection('skills')).sort(byOrder);
+}
+
+export async function getLanguages(): Promise<CollectionEntry<'languages'>[]> {
+  return (await getCollection('languages')).sort(byOrder);
+}
+
+export async function getAwards(): Promise<CollectionEntry<'awards'>[]> {
+  return (await getCollection('awards')).sort(byOrder);
+}
+
+export async function getCertifications(): Promise<CollectionEntry<'certifications'>[]> {
+  return (await getCollection('certifications')).sort(byOrder);
 }
 
 /** Every distinct tag across projects, alphabetical. Powers the filter on /projects/. */

@@ -1,11 +1,20 @@
-# Education. TODO: EXAMPLE data, replace with your own.
-# Field docs: docs/content.md#education
+# Education. Field docs: docs/content.md#education
 
-- id: example-degree
-  institution: Example University
-  degree: B.Tech, Computer Science
-  location: City, Country
-  start: 2021-08-01
-  end: 2025-05-31
+- id: saarland
+  institution: Universität des Saarlandes
+  degree: M.Sc. Data Science and Artificial Intelligence
+  location: Saarbrücken, Germany
+  start: 2024-10-01
+  # TODO: add `end:` with your expected graduation date, and 3-5 relevant
+  # courses as a note, e.g. "Relevant courses: Machine Learning, Neural Networks".
+  notes: []
+
+- id: gehu
+  institution: Graphic Era Hill University
+  degree: B.Tech. Computer Science and Engineering
+  location: India
+  start: 2020-09-01
+  end: 2024-06-30
+  # TODO: add your CGPA as a note if it's strong.
   notes:
-    - 'Relevant coursework: Machine Learning, Deep Learning, Probability, Linear Algebra.'
+    - Specialisation in Machine Learning and Artificial Intelligence.

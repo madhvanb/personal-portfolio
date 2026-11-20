@@ -11,7 +11,9 @@ Every field below is checked by a schema in `src/content.config.ts`. If you
 miss a required field or mistype a date, `npm run dev` shows an error naming
 the file and field. Nothing gets silently skipped.
 
-> All shipped content is example data marked `EXAMPLE`. Replace it or delete it.
+> Content comes from your résumé. Anything the résumé left as a placeholder
+> is marked `TODO` in a comment in the relevant file, never invented.
+> Search the repo for `TODO` to see what's left to fill in.
 
 ## Projects
 
@@ -22,9 +24,10 @@ becomes the URL: `rag-assistant.mdx` → `/projects/rag-assistant/`.
 ---
 title: Retrieval-Augmented Docs Assistant # required
 summary: One sentence, under 200 characters. # required
-date: 2026-03-01 # required; sorts the list, newest first
+date: 2026-03-01 # optional; shown as the year
+order: 1 # optional; lower comes first, then newest date
 role: Solo # optional, e.g. "Lead, team of 3"
-status: shipped # shipped | research | in-progress | archived
+status: shipped # optional: shipped | research | in-progress | archived
 tags: [LLMs, RAG, Python]
 featured: true # show on the home page
 metrics: # optional, 2-4 headline numbers
@@ -47,7 +50,7 @@ draft: false # true = visible in dev, hidden on the live site
 A good ML case study answers: what was the problem, what did you build and
 why, how did you **measure** it, and what would you do next. Short is fine.
 
-If no project is marked `featured`, the home page shows the three newest.
+If no project is marked `featured`, the home page shows the first three.
 
 ## Writing
 
@@ -126,16 +129,46 @@ Ordering is automatic: current roles first, then most recent.
 
 ## Publications
 
-`src/data/publications.yaml`: `id`, `title`, `authors` (list), `venue`,
-`year` required; `links` optional (same keys as projects). Your name is
-bolded when it exactly matches `name` in `src/config/site.ts`.
+`src/data/publications.yaml`: papers, book chapters and patents.
 
-No papers yet? Make the file contain just `[]`. The section hides itself.
+```yaml
+- id: tuberculosis-icaia # required, unique
+  title: A Study on Tuberculosis with ... # required
+  kind: conference # journal | conference | chapter | patent | preprint | workshop
+  venue: IEEE ICAIA # required
+  year: 2023 # optional; blank in the date column if missing
+  doi: 10.1109/ICAIA57370.2023.10169724 # optional; links to doi.org
+  authors: [A. Author, Madhvan Bajaj] # optional; your name is bolded
+  note: Application No. ... # optional extra line (patents)
+  links: { code: https://... } # optional
+  order: 1 # tie-breaker within the same year
+```
+
+Sorted newest year first, undated last. Your name is bolded when it matches
+`name` or one of `authorAliases` in `src/config/site.ts`. Empty file (`[]`)
+hides the section.
 
 ## Skills
 
 `src/data/skills.yaml`: groups with `id`, `label`, `items` (list), `order`
 (lower first). Shown on the résumé.
+
+## Languages, awards, certifications
+
+Résumé-only lists, each with an `order` field:
+
+- `src/data/languages.yaml`: `name`, `level`
+- `src/data/awards.yaml`: `title`, optional `detail` and `year` (free text, e.g. `'2023, 2024'`)
+- `src/data/certifications.yaml`: `name`, optional `issuer` and `url`
+
+## Home page facts and contact
+
+The facts table under your name (`Now`, `Studying`, ...) is `facts` in
+`src/config/site.ts`. Add, remove or reorder rows freely.
+
+`email` is empty on purpose, so it isn't exposed to spam scrapers. While it's
+empty, the Contact section links to your first social link (LinkedIn) instead.
+Fill it in to show your email everywhere.
 
 ## Résumé PDF
 

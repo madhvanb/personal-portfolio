@@ -41,7 +41,7 @@ const tags = collectTags(projects);
     {projects.map((p) => (
       <EntryRow
         href={href(`/projects/${p.id}/`)}
-        meta={formatYear(p.data.date)}
+        meta={p.data.date ? formatYear(p.data.date) : '—'}
         title={p.data.title}
         description={p.data.summary}
         tags={p.data.tags}
@@ -81,7 +81,8 @@ const tags = collectTags(projects);
 <style>
   .filter {
     display: flex;
-    gap: var(--space-4);
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
     align-items: baseline;
     margin-bottom: var(--space-6);
   }
@@ -94,16 +95,23 @@ const tags = collectTags(projects);
     gap: var(--space-2);
   }
   button {
+    min-height: var(--tap);
+    padding: 0 var(--space-4);
     background: none;
     border: var(--rule);
-    padding: var(--space-1) var(--space-3);
     cursor: pointer;
     font: inherit;
   }
-  button:hover,
+  button:active,
   button[aria-pressed='true'] {
     background: var(--color-fg);
     color: var(--color-bg);
+  }
+  @media (hover: hover) {
+    button:hover {
+      background: var(--color-fg);
+      color: var(--color-bg);
+    }
   }
   .empty {
     padding-block: var(--space-6);

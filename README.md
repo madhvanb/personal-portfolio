@@ -1,7 +1,8 @@
 # personal-portfolio
 
-My portfolio site: projects, writing and résumé. Monochrome and brutalist on
-purpose: black, white, hard rules and big type.
+Portfolio of Madhvan Bajaj: projects, publications, writing and résumé.
+Monochrome and brutalist on purpose: black, white, hard rules and big type.
+Built for and tested on iPhone, iPad (including mini) and laptops.
 
 Built with [Astro](https://astro.build). The output is plain static HTML with
 almost no JavaScript, hosted free on GitHub Pages.

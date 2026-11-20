@@ -67,8 +67,7 @@
   padding: var(--space-6);
   border: var(--rule);
   overflow-x: auto;
-  /* Break out wider than the text column on large screens. */
-  max-width: calc(100vw - 2 * var(--page-gutter));
+  -webkit-overflow-scrolling: touch;
 }
 .prose pre,
 .prose pre span {

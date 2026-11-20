@@ -1,0 +1,16 @@
+# Certifications. Shown on the résumé. Add `url:` to link a credential.
+
+- id: azure-ai-900
+  name: Azure AI Fundamentals
+  issuer: Microsoft
+  order: 1
+
+- id: azure-nlp
+  name: Natural Language Processing in Microsoft Azure
+  issuer: Microsoft
+  order: 2
+
+- id: aws-cloud-architecting
+  name: AWS Academy Cloud Architecting
+  issuer: Amazon Web Services
+  order: 3

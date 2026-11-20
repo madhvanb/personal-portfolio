@@ -25,16 +25,23 @@ const year = new Date().getFullYear();
   .footer {
     margin-top: auto;
     border-top: var(--rule);
+    padding-bottom: env(safe-area-inset-bottom); /* clear the iPhone home bar */
   }
   .row {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     justify-content: space-between;
-    gap: var(--space-4);
-    padding-block: var(--space-6);
+    gap: 0 var(--space-4);
+    padding-block: var(--space-3);
   }
   .links {
     display: flex;
-    gap: var(--space-6);
+    gap: var(--space-4);
+  }
+  .links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
   }
 </style>
