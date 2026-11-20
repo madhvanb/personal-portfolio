@@ -1,10 +1,20 @@
 ---
 /**
- * <ChapterFigure>: a small monochrome line drawing for a story chapter.
- * Every drawing makes the same point in a different domain: most of the
- * picture is ordinary, one part is marked as the thing that doesn't belong.
+ * <LineDrawing>: a small monochrome line drawing.
  *
- *   <ChapterFigure kind="skies" />
+ *   <LineDrawing kind="skies" />
+ *
+ * Kinds:
+ *   networks  a noisy signal with one spike boxed (anomaly detection)
+ *   skies     a graph with one node targeted (drone detection with GNNs)
+ *   words     lines of text with one flagged (RAG + misinformation check)
+ *   health    a grid of cells with a cluster detected (medical ML)
+ *   tds       measurements with a fitted line (coffee TDS research)
+ *   record    a vinyl record (music page)
+ *   v60       a V60 dripper over a cup (coffee page)
+ *
+ * To add one: add the name to DRAWINGS in src/lib/drawings.ts and draw it
+ * in the SVG below. The content schemas pick up the new name automatically.
  *
  * Drawing animation: lines "draw themselves" when the figure scrolls into
  * view. It's opt-in: the script adds `.will-draw` only if the visitor allows
@@ -13,11 +23,25 @@
  * All shapes are generated from a fixed seed, so the drawing is identical on
  * every build.
  */
+import type { Kind } from '@/lib/drawings';
+
 interface Props {
-  kind: 'networks' | 'skies' | 'words' | 'health' | 'coffee';
+  kind: Kind;
+  /** Screen-reader description. Defaults to a generic one per kind. */
+  label?: string;
 }
 
-const { kind } = Astro.props;
+const LABELS: Record<Kind, string> = {
+  networks: 'A noisy signal with one spike marked as an anomaly',
+  skies: 'A network of points with one targeted by a crosshair',
+  words: 'Lines of text with one line flagged',
+  health: 'A grid of cells with a cluster highlighted',
+  tds: 'A scatter plot of measurements with a fitted line',
+  record: 'A vinyl record',
+  v60: 'A V60 coffee dripper over a cup',
+};
+
+const { kind, label = LABELS[kind] } = Astro.props;
 
 /** Small deterministic PRNG (mulberry32) so drawings don't change between builds. */
 function rng(seed: number) {
@@ -70,7 +94,7 @@ const cells = Array.from({ length: 100 }, (_, i) => {
   return { cx, cy, hit: d < 26 || (d < 34 && r() > 0.5) };
 });
 
-// coffee: measurements with a fitted line
+// tds: measurements with a fitted line
 const points = Array.from({ length: 22 }, (_, i) => {
   const x = 22 + i * 7.5;
   return { x, y: 170 - (x - 20) * 0.75 + (r() - 0.5) * 34 };
@@ -78,7 +102,7 @@ const points = Array.from({ length: 22 }, (_, i) => {
 ---
 
 <figure class="fig" data-figure>
-  <svg viewBox="0 0 200 200" role="img" aria-label={`Line drawing: ${kind}`}>
+  <svg viewBox="0 0 200 200" role="img" aria-label={label}>
     <rect class="frame" x="1" y="1" width="198" height="198" pathLength="1"></rect>
     {kind === 'networks' && (
       <g>
@@ -174,7 +198,7 @@ const points = Array.from({ length: 22 }, (_, i) => {
         <rect class="draw mark" x="88" y="72" width="72" height="72" pathLength="1" />
       </g>
     )}
-    {kind === 'coffee' && (
+    {kind === 'tds' && (
       <g>
         <line class="draw faint" x1="16" y1="184" x2="190" y2="184" pathLength="1" />
         <line class="draw faint" x1="16" y1="184" x2="16" y2="12" pathLength="1" />
@@ -185,6 +209,44 @@ const points = Array.from({ length: 22 }, (_, i) => {
         <text class="note" x="22" y="26">
           TDS
         </text>
+      </g>
+    )}
+    {kind === 'record' && (
+      <g>
+        <circle class="draw" cx="100" cy="100" r="80" pathLength="1" />
+        {[70, 61, 52, 43].map((r) => (
+          <circle class="draw faint" cx="100" cy="100" r={r} pathLength="1" />
+        ))}
+        <circle class="draw mark" cx="100" cy="100" r="24" pathLength="1" />
+        <circle class="solid" cx="100" cy="100" r="3" />
+        {/* tonearm */}
+        <polyline class="draw" points="186,22 186,60 132,112" pathLength="1" />
+        <rect class="draw mark" x="124" y="106" width="12" height="12" pathLength="1" />
+      </g>
+    )}
+    {kind === 'v60' && (
+      <g>
+        {/* cone with ribs */}
+        <polygon class="draw mark" points="44,46 156,46 112,112 88,112" pathLength="1" />
+        <line class="draw" x1="36" y1="46" x2="164" y2="46" pathLength="1" />
+        {[0.25, 0.5, 0.75].map((t) => (
+          <line
+            class="draw faint"
+            x1={f(44 + 112 * t)}
+            y1="52"
+            x2={f(88 + 24 * t)}
+            y2="106"
+            pathLength="1"
+          />
+        ))}
+        <rect class="draw" x="80" y="112" width="40" height="8" pathLength="1" />
+        {/* drip */}
+        <line class="draw faint" x1="100" y1="124" x2="100" y2="134" pathLength="1" />
+        <circle class="solid" cx="100" cy="141" r="2.5" />
+        {/* cup */}
+        <polyline class="draw" points="62,150 70,186 130,186 138,150" pathLength="1" />
+        <line class="draw" x1="56" y1="150" x2="144" y2="150" pathLength="1" />
+        <path class="draw" d="M137 158 q16 0 14 12 q-2 10 -18 8" pathLength="1" />
       </g>
     )}
   </svg>

@@ -1,0 +1,53 @@
+# Tools and gear on the /uses/ page. Each group needs at least one item.
+# TODO: add your laptop, editor, and the rest of your coffee kit (grinder, kettle, scale).
+
+- id: ml
+  label: Machine learning
+  order: 1
+  items:
+    - name: Python
+    - name: PyTorch
+    - name: TensorFlow / Keras
+    - name: scikit-learn
+    - name: OpenCV
+
+- id: llm
+  label: LLMs
+  order: 2
+  items:
+    - name: LLaMA
+      note: for RAG pipelines
+    - name: Text embeddings
+
+- id: data
+  label: Data
+  order: 3
+  items:
+    - name: Pandas, NumPy, SciPy
+    - name: Matplotlib, Seaborn, Plotly
+    - name: SQL / MySQL
+    - name: Jupyter
+
+- id: cloud
+  label: Cloud and tools
+  order: 4
+  items:
+    - name: AWS
+      note: EC2, S3, Lambda
+    - name: Azure
+    - name: Git / GitHub
+
+- id: coffee
+  label: Coffee
+  order: 5
+  items:
+    - name: Hario V60
+
+- id: site
+  label: This site
+  order: 6
+  items:
+    - name: Astro
+      note: plain HTML out, almost no JavaScript
+    - name: IBM Plex Sans and Mono
+    - name: GitHub Pages

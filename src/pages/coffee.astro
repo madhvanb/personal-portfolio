@@ -1,0 +1,116 @@
+---
+/**
+ * /coffee/: brewing, research and the patent.
+ * Text: src/content/pages/coffee.mdx. Recipes: src/data/brews.yaml.
+ * Cafés: src/data/cafes.yaml. Patent: src/data/publications.yaml.
+ */
+import ListBlock from '@/components/ListBlock.astro';
+import LineDrawing from '@/components/LineDrawing.astro';
+import PaperList from '@/components/PaperList.astro';
+import SimplePage from '@/layouts/SimplePage.astro';
+import { getBrews, getCafes, getPage, getPublications } from '@/lib/content';
+
+const page = await getPage('coffee');
+const brews = await getBrews();
+const cafes = await getCafes();
+const patents = (await getPublications())
+  .filter((p) => p.data.kind === 'patent')
+  .map((p) => p.data);
+
+const FIELDS = [
+  ['beans', 'Beans'],
+  ['dose', 'Dose'],
+  ['water', 'Water'],
+  ['grind', 'Grind'],
+  ['temperature', 'Temp.'],
+  ['time', 'Time'],
+] as const;
+---
+
+<SimplePage {page} drawing="v60">
+  {brews.map(({ data }) => {
+    const rows = FIELDS.flatMap(([key, label]) => (data[key] ? [{ label, value: data[key] }] : []));
+    return (
+      <ListBlock title={data.name}>
+        <div class="kv">
+          <span>Method</span>
+          <span>{data.method}</span>
+        </div>
+        {rows.map((r) => (
+          <div class="kv">
+            <span>{r.label}</span>
+            <span>{r.value}</span>
+          </div>
+        ))}
+        {data.steps.length > 0 && (
+          <div class="kv">
+            <span>Steps</span>
+            <ol class="steps">
+              {data.steps.map((s) => (
+                <li>{s}</li>
+              ))}
+            </ol>
+          </div>
+        )}
+        {data.note && <p class="note muted">{data.note}</p>}
+      </ListBlock>
+    );
+  })}
+
+  <ListBlock title="Coffee, measured">
+    <div class="research">
+      <p>
+        As a research assistant I measured total dissolved solids (TDS) and electrochemical
+        properties of coffee extractions, then built predictive models on the data.
+      </p>
+      <div class="tds">
+        <LineDrawing kind="tds" />
+      </div>
+    </div>
+    <PaperList papers={patents} />
+  </ListBlock>
+
+  {cafes.length > 0 && (
+    <ListBlock title="Good cafés">
+      {cafes.map(({ data }) => (
+        <div class="kv">
+          <span>{data.city}</span>
+          <span>
+            {data.url ? <a href={data.url}>{data.name}</a> : data.name}
+            {data.note && <span class="muted"> · {data.note}</span>}
+          </span>
+        </div>
+      ))}
+    </ListBlock>
+  )}
+</SimplePage>
+
+<style>
+  .steps {
+    padding-left: 1.2em;
+  }
+  .steps li + li {
+    margin-top: var(--space-2);
+  }
+  .note {
+    padding-block: var(--space-4);
+  }
+  .research {
+    display: grid;
+    gap: var(--space-6);
+    padding-block: var(--space-6);
+  }
+  .research p {
+    max-width: 60ch;
+    font-size: var(--text-md);
+  }
+  .tds {
+    width: min(100%, 10rem);
+  }
+  @media (min-width: 40rem) {
+    .research {
+      grid-template-columns: minmax(0, 1fr) 10rem;
+      align-items: start;
+    }
+  }
+</style>

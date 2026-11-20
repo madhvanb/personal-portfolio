@@ -2,7 +2,7 @@
  * URL helpers.
  *
  * The site can be served from a sub-path (e.g. /personal-portfolio/ on GitHub
- * Pages). Linking to "/projects/" directly would break there, so every
+ * Pages). Linking to "/work/" directly would break there, so every
  * internal link goes through `href()`.
  */
 
@@ -11,7 +11,7 @@ const BASE = import.meta.env.BASE_URL; // e.g. "/personal-portfolio/" or "/"
 /**
  * Turn a site path into a real URL path that includes the base.
  *
- * @example href('/projects/')   // "/personal-portfolio/projects/"
+ * @example href('/work/')   // "/personal-portfolio/work/"
  * @example href('/')            // "/personal-portfolio/"
  */
 export function href(path: string): string {

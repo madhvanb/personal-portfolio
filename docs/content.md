@@ -56,7 +56,7 @@ A new `figure` drawing means adding a case to `src/components/ChapterFigure.astr
 ## Projects
 
 One file per project: `src/content/projects/<slug>.mdx`. The file name
-becomes the URL: `rag-assistant.mdx` → `/projects/rag-assistant/`.
+becomes the URL: `rag-assistant.mdx` → `/work/rag-assistant/`.
 
 ```mdx
 ---

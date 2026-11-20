@@ -1,31 +1,62 @@
 ---
 /** Shown for any URL that doesn't exist. GitHub Pages serves this automatically. */
+import LineDrawing from '@/components/LineDrawing.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { href } from '@/lib/url';
 ---
 
 <BaseLayout title="Not found">
   <div class="nf">
-    <h1>404</h1>
-    <p>This page doesn't exist. It may have moved.</p>
-    <p class="label">
-      <a href={href('/')}>← Home</a>
-    </p>
+    <div class="drawing">
+      <LineDrawing kind="v60" label="A V60 dripper over an empty cup" />
+    </div>
+    <div>
+      <h1>404</h1>
+      <p>This page doesn't exist. Probably moved, possibly spilled.</p>
+      <ul class="label">
+        <li>
+          <a href={href('/')}>← Home</a>
+        </li>
+        <li>
+          <a href={href('/work/')}>Work</a>
+        </li>
+        <li>
+          <a href={href('/coffee/')}>Coffee</a>
+        </li>
+      </ul>
+    </div>
   </div>
 </BaseLayout>
 
 <style>
   .nf {
-    padding-block: var(--space-24);
+    display: grid;
+    gap: var(--space-8);
+    padding-block: var(--space-16) var(--space-24);
+  }
+  .drawing {
+    width: min(100%, 10rem);
   }
   h1 {
-    font-size: var(--text-display);
+    font-size: var(--text-xl);
     font-weight: 700;
-    line-height: var(--leading-tight);
+    line-height: 1;
     letter-spacing: var(--tracking-tight);
   }
   p {
-    margin-top: var(--space-6);
+    margin-top: var(--space-4);
     font-size: var(--text-md);
+  }
+  ul {
+    display: flex;
+    gap: var(--space-6);
+    margin-top: var(--space-6);
+    list-style: none;
+    padding: 0;
+  }
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
   }
 </style>

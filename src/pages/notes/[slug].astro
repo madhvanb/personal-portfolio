@@ -1,6 +1,6 @@
 ---
 /**
- * /writing/<id>/: one page per file in src/content/writing/.
+ * /notes/<id>/: one page per file in src/content/notes/.
  */
 import { render } from 'astro:content';
 import ArticleLayout from '@/layouts/ArticleLayout.astro';
@@ -25,8 +25,8 @@ const { Content } = await render(post);
   date={post.data.date}
   updated={post.data.updated}
   tags={post.data.tags}
-  kicker="Writing"
-  back={{ label: 'All writing', path: '/writing/' }}
+  kicker="Note"
+  back={{ label: 'All notes', path: '/notes/' }}
 >
   <Content />
 </ArticleLayout>

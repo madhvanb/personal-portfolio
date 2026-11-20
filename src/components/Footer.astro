@@ -1,6 +1,7 @@
 ---
 /**
- * <Footer>: copyright, source link, RSS and back-to-top.
+ * <Footer>: a small personal note, extra pages, links and back-to-top.
+ * The note and links come from src/config/site.ts (footerNote, footerNav, socials).
  */
 import { site } from '@/config/site';
 import { href } from '@/lib/url';
@@ -9,15 +10,32 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="footer" data-print="hide">
-  <div class="container row label">
-    <span>
-      © {year} {site.name}
-    </span>
-    <span class="links">
-      <a href={href('/rss.xml')}>RSS</a>
-      {site.sourceUrl && <a href={site.sourceUrl}>Source</a>}
-      <a href="#top">Top ↑</a>
-    </span>
+  <div class="container inner">
+    {site.footerNote && <p class="note">{site.footerNote}</p>}
+    <div class="row label">
+      <nav aria-label="More pages">
+        <ul>
+          {site.footerNav.map((item) => (
+            <li>
+              <a href={href(item.path)}>{item.label}</a>
+            </li>
+          ))}
+          {site.socials.map((s) => (
+            <li>
+              <a href={s.url} rel="me noopener">
+                {s.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <span class="end">
+        <span class="muted">
+          © {year} {site.name}
+        </span>
+        <a href="#top">Top ↑</a>
+      </span>
+    </div>
   </div>
 </footer>
 
@@ -27,19 +45,35 @@ const year = new Date().getFullYear();
     border-top: var(--rule);
     padding-bottom: env(safe-area-inset-bottom); /* clear the iPhone home bar */
   }
+  .inner {
+    padding-block: var(--space-6) var(--space-3);
+  }
+  .note {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
   .row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 0 var(--space-4);
-    padding-block: var(--space-3);
+    gap: 0 var(--space-6);
+    margin-top: var(--space-3);
   }
-  .links {
+  ul {
     display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-4);
+    list-style: none;
+    padding: 0;
+  }
+  .end {
+    display: flex;
+    align-items: center;
     gap: var(--space-4);
   }
-  .links a {
+  a {
     display: inline-flex;
     align-items: center;
     min-height: var(--tap);

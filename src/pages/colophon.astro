@@ -1,0 +1,9 @@
+---
+/** /colophon/: how the site is made. Text: src/content/pages/colophon.mdx. */
+import SimplePage from '@/layouts/SimplePage.astro';
+import { getPage } from '@/lib/content';
+
+const page = await getPage('colophon');
+---
+
+<SimplePage {page} />

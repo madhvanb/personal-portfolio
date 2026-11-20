@@ -54,8 +54,8 @@ scripts/check-links.mjs   Post-build broken-link checker
 | ----------------------------- | ------------------------------------------ |
 | `pages/index.astro`           | `/` (the story)                            |
 | `pages/work/[slug].astro`     | `/work/<id>/` (chapters with `page: true`) |
-| `pages/projects/index.astro`  | `/projects/`                               |
-| `pages/projects/[slug].astro` | `/projects/<id>/`                          |
+| `pages/projects/index.astro`  | `/work/`                                   |
+| `pages/projects/[slug].astro` | `/work/<id>/`                              |
 | `pages/writing/index.astro`   | `/writing/`                                |
 | `pages/writing/[slug].astro`  | `/writing/<id>/`                           |
 | `pages/resume.astro`          | `/resume/`                                 |

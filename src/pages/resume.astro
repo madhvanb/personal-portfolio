@@ -117,7 +117,7 @@ const next = () => String(++n).padStart(2, '0');
             <span class="label">{p.data.date?.getUTCFullYear() ?? p.data.tags[0] ?? ''}</span>
             <div>
               <h3>
-                <a href={href(`/projects/${p.id}/`)}>{p.data.title}</a>
+                <a href={href(`/work/${p.id}/`)}>{p.data.title}</a>
               </h3>
               <p class="muted">{p.data.summary}</p>
             </div>

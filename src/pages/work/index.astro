@@ -1,0 +1,46 @@
+---
+/**
+ * /work/: projects in two groups: work from jobs and research first, then
+ * side projects. Set `group:` in each file in src/content/projects/.
+ */
+import EntryList from '@/components/EntryList.astro';
+import EntryRow from '@/components/EntryRow.astro';
+import PageTitle from '@/components/PageTitle.astro';
+import Section from '@/components/Section.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getProjects, type Project } from '@/lib/content';
+import { formatYear } from '@/lib/dates';
+import { href } from '@/lib/url';
+
+const projects = await getProjects();
+const groups = [
+  { title: 'Jobs and research', items: projects.filter((p) => p.data.group === 'work') },
+  { title: 'Side projects', items: projects.filter((p) => p.data.group === 'side') },
+].filter((g) => g.items.length > 0);
+
+const meta = (p: Project) => (p.data.date ? formatYear(p.data.date) : '—');
+---
+
+<BaseLayout title="Work" description="Machine learning work, research and side projects.">
+  <PageTitle title="Work">
+    What I've built, what it was for, and what happened. Some are short because the work isn't
+    public.
+  </PageTitle>
+
+  {groups.map((g) => (
+    <Section title={g.title}>
+      <EntryList>
+        {g.items.map((p) => (
+          <EntryRow
+            href={href(`/work/${p.id}/`)}
+            meta={meta(p)}
+            title={p.data.title}
+            description={p.data.summary}
+            tags={p.data.tags}
+            note={p.data.org}
+          />
+        ))}
+      </EntryList>
+    </Section>
+  ))}
+</BaseLayout>

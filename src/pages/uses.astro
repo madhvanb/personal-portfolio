@@ -1,0 +1,38 @@
+---
+/** /uses/: tools and gear. List: src/data/uses.yaml. */
+import ListBlock from '@/components/ListBlock.astro';
+import SimplePage from '@/layouts/SimplePage.astro';
+import { getUses } from '@/lib/content';
+
+const groups = await getUses();
+---
+
+<SimplePage title="Uses" description="The tools I work with, and the coffee kit.">
+  <p class="lead">The tools I actually use, for work and for coffee.</p>
+  {groups.map(({ data }) => (
+    <ListBlock title={data.label}>
+      <ul class="items">
+        {data.items.map((item) => (
+          <li>
+            <span>{item.name}</span>
+            {item.note && <span class="muted"> · {item.note}</span>}
+          </li>
+        ))}
+      </ul>
+    </ListBlock>
+  ))}
+</SimplePage>
+
+<style>
+  .lead {
+    font-size: var(--text-md);
+  }
+  .items {
+    list-style: none;
+    padding: 0;
+  }
+  .items li {
+    padding-block: var(--space-3);
+    border-bottom: var(--rule);
+  }
+</style>

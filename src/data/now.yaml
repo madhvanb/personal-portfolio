@@ -1,0 +1,27 @@
+# What you're up to. Shown on /now/ and (items with home: true) on the home page.
+# Update the date in src/content/pages/now.mdx when you change this.
+
+- id: working
+  label: Working
+  text: Anomaly detection on network traffic, as an ML working student at consistec in Saarbrücken.
+  order: 1
+
+- id: studying
+  label: Studying
+  text: M.Sc. Data Science and Artificial Intelligence at Saarland University.
+  order: 2
+
+- id: learning
+  label: Learning
+  text: German. Currently A1.
+  order: 3
+
+- id: brewing
+  label: Brewing
+  text: Pour-overs on a V60.
+  order: 4
+
+- id: listening
+  label: Listening
+  text: AC/DC, Nirvana, Radiohead.
+  order: 5
