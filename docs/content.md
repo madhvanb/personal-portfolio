@@ -21,7 +21,10 @@ The home page is built from:
 
 - `greeting` and `intro` (a list of short paragraphs) in `src/config/site.ts`.
 - **Now**: items in `src/data/now.yaml` with `home: true`.
-- **Selected work**: projects with `featured: true`.
+- **Things I've worked on**: a short story. `storyIntro` in `site.ts` leads in,
+  then one chapter per featured project that has a `theme:` (one word, e.g.
+  `Skies`), in `order`. Each chapter shows the theme, title, summary, metrics
+  and line drawing, and links to the full write-up.
 - **Notes**: the latest three, hidden until you publish one.
 - **Off the clock**: links to the Music and Coffee pages.
 - **Questions people ask**: items in `src/data/faq.yaml` with `home: true` (keep it to 3).

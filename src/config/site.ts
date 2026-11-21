@@ -48,6 +48,12 @@ export const site = {
     'Madhvan Bajaj: machine learning working student and M.Sc. Data Science & AI student at Saarland University. Projects, publications and résumé.',
   location: 'Saarbrücken, Germany',
   /**
+   * One or two sentences above the story chapters on the home page. The
+   * chapters themselves are featured projects with a `theme`.
+   */
+  storyIntro:
+    "Looking back, most of my work ended up being about the same thing: spotting what doesn't fit. Anomalies in network traffic, drones in busy airspace, made-up claims in machine-written text, and disease in medical data.",
+  /**
    * The small line at the bottom of every page. A little bit of you.
    * Change it whenever; it's meant to be current.
    */

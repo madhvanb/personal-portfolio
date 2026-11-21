@@ -56,6 +56,11 @@ const projects = defineCollection({
     role: z.string().optional(),
     /** Where, e.g. "DRDO" or "consistec". Leave out for personal projects. */
     org: z.string().optional(),
+    /**
+     * One word for the home page story, e.g. "Skies". Featured projects with a
+     * theme appear as story chapters on the home page, in `order`.
+     */
+    theme: z.string().optional(),
     /** "work" = from jobs and research, shown first; "side" = side projects. */
     group: z.enum(['work', 'side']).default('side'),
     /** Line drawing shown on the project page. See src/components/LineDrawing.astro. */
