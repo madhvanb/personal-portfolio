@@ -1,0 +1,136 @@
+---
+/**
+ * <StoryChapter>: one chapter of the home page story, built from a project
+ * that has a `theme` (src/content/projects/*.mdx).
+ *
+ *   <StoryChapter project={p} index={1} />
+ *
+ * Shows: "01 · consistec · 2025", the theme word, the project title and
+ * summary, a few small numbers, a link to the full write-up, and the
+ * project's line drawing. Deliberately quiet: no huge type, no inversion.
+ *
+ * Layout: phone = stacked (drawing under the theme word);
+ *         ≥ 52rem = text left, drawing right.
+ */
+import type { Project } from '@/lib/content';
+import { formatYear } from '@/lib/dates';
+import { href } from '@/lib/url';
+import LineDrawing from './LineDrawing.astro';
+
+interface Props {
+  project: Project;
+  /** Position in the story, starting at 1. */
+  index: number;
+}
+
+const { project, index } = Astro.props;
+const { data } = project;
+const meta = [
+  String(index).padStart(2, '0'),
+  data.org,
+  data.status === 'in-progress' ? 'now' : data.date && formatYear(data.date),
+]
+  .filter(Boolean)
+  .join(' · ');
+---
+
+<article class="chapter" aria-labelledby={`ch-${project.id}`}>
+  <div class="text">
+    <p class="label muted">{meta}</p>
+    <h3 id={`ch-${project.id}`} class="theme">
+      {data.theme}
+    </h3>
+    <p class="title">{data.title}</p>
+    <p class="summary">{data.summary}</p>
+    {data.metrics.length > 0 && (
+      <dl class="nums">
+        {data.metrics.map((m) => (
+          <div>
+            <dd>{m.value}</dd>
+            <dt class="label muted">{m.label}</dt>
+          </div>
+        ))}
+      </dl>
+    )}
+    <a class="more label" href={href(`/work/${project.id}/`)}>
+      Read the full story →
+    </a>
+  </div>
+  {data.figure && (
+    <div class="drawing">
+      <LineDrawing kind={data.figure} />
+    </div>
+  )}
+</article>
+
+<style>
+  .chapter {
+    display: grid;
+    gap: var(--space-6);
+    padding-block: var(--space-12);
+    border-bottom: var(--rule);
+  }
+  .chapter:first-child {
+    border-top: var(--rule);
+  }
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  .theme {
+    font-size: clamp(2.5rem, 1.6rem + 4vw, 5rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.045em;
+    hyphens: none;
+  }
+  .title {
+    margin-top: var(--space-2);
+    font-size: var(--text-md);
+    font-weight: 600;
+  }
+  .summary {
+    max-width: 56ch;
+    color: var(--color-muted);
+  }
+  .nums {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-8);
+    margin-top: var(--space-2);
+  }
+  .nums div {
+    display: flex;
+    flex-direction: column;
+  }
+  .nums dd {
+    order: -1;
+    font-size: var(--text-lg);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .more {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+    width: fit-content;
+  }
+  .drawing {
+    width: min(100%, 12rem);
+    order: -1;
+  }
+  @media (min-width: 52rem) {
+    .chapter {
+      grid-template-columns: minmax(0, 1fr) 15rem;
+      gap: var(--space-12);
+      align-items: center;
+    }
+    .drawing {
+      order: 0;
+      width: 100%;
+    }
+  }
+</style>

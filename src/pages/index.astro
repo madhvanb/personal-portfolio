@@ -3,23 +3,26 @@
  * Home page. Plain and short on purpose:
  *   Hello            site.greeting + site.intro (src/config/site.ts)
  *   Now              src/data/now.yaml (items with home: true)
- *   Selected work    featured projects (src/content/projects/)
+ *   Story            featured projects with a `theme` (src/content/projects/),
+ *                    introduced by site.storyIntro
  *   Notes            latest notes, hidden until there are any
  *   Not working      links to Music and Coffee
  *   Questions        src/data/faq.yaml (items with home: true)
  */
 import EntryList from '@/components/EntryList.astro';
+import StoryChapter from '@/components/StoryChapter.astro';
 import EntryRow from '@/components/EntryRow.astro';
 import LineDrawing from '@/components/LineDrawing.astro';
 import Section from '@/components/Section.astro';
 import { site } from '@/config/site';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getFaq, getFeaturedProjects, getMusic, getNow, getPosts } from '@/lib/content';
-import { formatDate, formatYear } from '@/lib/dates';
+import { formatDate } from '@/lib/dates';
 import { href } from '@/lib/url';
 
 const now = (await getNow()).filter((n) => n.data.home);
-const work = await getFeaturedProjects();
+// Story chapters: featured projects that have a `theme`, in their `order`.
+const story = (await getFeaturedProjects()).filter((p) => p.data.theme);
 const posts = (await getPosts()).slice(0, 3);
 const artists = (await getMusic()).map((m) => m.data.artist);
 const questions = (await getFaq()).filter((q) => q.data.home);
@@ -67,22 +70,17 @@ const questions = (await getFaq()).filter((q) => q.data.home);
     </Section>
   )}
 
-  {work.length > 0 && (
+  {story.length > 0 && (
     <Section title="Things I've worked on" id="work">
       <a slot="action" href={href('/work/')}>
         See all →
       </a>
-      <EntryList>
-        {work.map((p) => (
-          <EntryRow
-            href={href(`/work/${p.id}/`)}
-            meta={p.data.date ? formatYear(p.data.date) : '—'}
-            title={p.data.title}
-            description={p.data.summary}
-            note={p.data.org}
-          />
+      <p class="lead-in">{site.storyIntro}</p>
+      <div class="story">
+        {story.map((p, i) => (
+          <StoryChapter project={p} index={i + 1} />
         ))}
-      </EntryList>
+      </div>
     </Section>
   )}
 
@@ -181,6 +179,12 @@ const questions = (await getFaq()).filter((q) => q.data.home);
 
   .now {
     border-top: var(--rule);
+  }
+
+  .lead-in {
+    max-width: 44rem;
+    margin-bottom: var(--space-8);
+    font-size: var(--text-md);
   }
   .now div {
     display: grid;
